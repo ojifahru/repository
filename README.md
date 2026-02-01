@@ -1,59 +1,177 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Repository Tri Dharma
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi ini adalah **repository dokumen Tri Dharma** (mis. penelitian) berbasis Laravel + Filament.
 
-## About Laravel
+Tujuan utamanya:
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Menyediakan **halaman publik** untuk melihat daftar dokumen, detail, halaman author, dan download.
+- Menyediakan **panel admin** untuk mengelola data dokumen, author, kategori, fakultas, program studi, dan pengguna.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Fitur
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Publik
 
-## Learning Laravel
+- Beranda: `/`
+- Daftar dokumen: `/dokumen` (pagination)
+- Detail dokumen: `/dokumen/{id}`
+- Download dokumen: `/dokumen/{id}/download`
+- Halaman author: `/author/{id}`
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Catatan: halaman publik hanya menampilkan dokumen dengan status `published`.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Admin (Filament)
 
-## Laravel Sponsors
+- Panel admin tersedia di `/admin`
+- Role & permission menggunakan `spatie/laravel-permission` + Filament Shield
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Teknologi
 
-### Premium Partners
+- Laravel 12
+- Filament v4
+- Tailwind CSS v4 + Vite
+- Pest (testing)
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Development (Local)
 
-## Contributing
+### Prasyarat
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- PHP + Composer
+- Node.js + npm
+- Database: SQLite (default) atau MySQL/PostgreSQL
 
-## Code of Conduct
+### Setup cepat
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1) Install dependency:
 
-## Security Vulnerabilities
+```bash
+composer install
+npm install
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+2) Siapkan `.env`:
 
-## License
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+3) Buat database & seed data awal:
+
+```bash
+php artisan migrate:fresh --seed
+```
+
+Seeder akan membuat role/permission awal dan user admin default.
+Credential admin bisa diatur lewat `.env`:
+
+```dotenv
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=password
+```
+
+4) Jalankan aplikasi:
+
+Pilihan A (recommended, semua jalan bareng):
+
+```bash
+composer run dev
+```
+
+Pilihan B (manual, beberapa terminal):
+
+```bash
+php artisan serve
+npm run dev
+```
+
+5) Buka aplikasi:
+
+- Publik: `http://localhost:8000`
+- Admin: `http://localhost:8000/admin`
+
+## Production (Deploy)
+
+Checklist umum untuk deploy ke server (Nginx/Apache):
+
+### 1) Environment
+
+Pastikan `.env` production berisi minimal:
+
+```dotenv
+APP_ENV=production
+APP_DEBUG=false
+APP_KEY=base64:...
+APP_URL=https://domain-anda.tld
+
+DB_CONNECTION=mysql
+DB_HOST=...
+DB_PORT=3306
+DB_DATABASE=...
+DB_USERNAME=...
+DB_PASSWORD=...
+```
+
+Jika ingin men-setup admin pertama via seeder, set juga `ADMIN_EMAIL` dan `ADMIN_PASSWORD` lalu jalankan seeding sekali.
+
+### 2) Install dependency (server)
+
+```bash
+composer install --no-dev --optimize-autoloader
+```
+
+### 3) Migrasi database
+
+```bash
+php artisan migrate --force
+```
+
+Jika perlu seed awal (sekali saja):
+
+```bash
+php artisan db:seed --class=Database\\Seeders\\InitialDataSeeder --force
+```
+
+### 4) Build asset frontend
+
+```bash
+npm ci
+npm run build
+```
+
+Pastikan folder `public/build` ikut ter-deploy.
+
+### 5) Cache & permission folder
+
+```bash
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
+Pastikan folder ini writable oleh web server:
+
+- `storage/`
+- `bootstrap/cache/`
+
+### 6) Queue & Scheduler (opsional tapi disarankan)
+
+Jika menggunakan queue (default `QUEUE_CONNECTION=database`), jalankan worker via Supervisor/systemd:
+
+```bash
+php artisan queue:work --tries=1 --timeout=0
+```
+
+Untuk scheduler, pasang cron:
+
+```cron
+* * * * * cd /path/to/app && php artisan schedule:run >> /dev/null 2>&1
+```
+
+## Troubleshooting
+
+- Error Vite manifest (Unable to locate file in Vite manifest): jalankan `npm run build` (production) atau `npm run dev` (development).
+- Reset database lokal: `php artisan migrate:fresh --seed`.
+
+## Catatan
+
+Project ini menggunakan Laravel. Referensi framework: https://laravel.com/docs

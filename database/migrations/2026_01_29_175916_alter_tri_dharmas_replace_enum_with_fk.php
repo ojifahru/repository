@@ -24,18 +24,20 @@ return new class extends Migration
 
         // Hapus kolom lama (ENUM & STRING)
         Schema::table('tri_dharmas', function (Blueprint $table) {
+            // Index komposit lama dipakai untuk FK (study_program_id).
+            // Buat index khusus dulu supaya aman saat drop index komposit.
+            $table->index('study_program_id', 'tri_dharmas_study_program_id_index');
+
             $table->dropIndex(['study_program_id', 'category', 'status', 'publish_year']);
             $table->dropColumn(['category', 'document_type']);
         });
 
         // Tambah index baru
         Schema::table('tri_dharmas', function (Blueprint $table) {
-            $table->index([
-                'study_program_id',
-                'category_id',
-                'status',
-                'publish_year'
-            ]);
+            $table->index(
+                ['study_program_id', 'category_id', 'status', 'publish_year'],
+                'tri_dharmas_sp_cat_status_year_idx'
+            );
         });
     }
 
@@ -47,7 +49,7 @@ return new class extends Migration
             $table->enum('category', [
                 'pendidikan',
                 'penelitian',
-                'pengabdian'
+                'pengabdian',
             ])->after('abstract');
 
             $table->string('document_type')->after('category');

@@ -27,10 +27,10 @@ class TriDharma extends Model
     ];
 
     protected $casts = [
-        'publish_year'   => 'integer',
-        'file_size'      => 'integer',
+        'publish_year' => 'integer',
+        'file_size' => 'integer',
         'download_count' => 'integer',
-        'deleted_at'     => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     public function authors()
