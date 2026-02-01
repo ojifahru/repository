@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Database\Seeders\InitialDataSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,5 +22,8 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+
+        // Seed initial roles, permissions, and admin user
+        $this->call(InitialDataSeeder::class);
     }
 }
