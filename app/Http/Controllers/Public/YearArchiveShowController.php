@@ -3,55 +3,56 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
-use App\Models\Author;
 use App\Models\TriDharma;
 use App\Support\Seo\Seo;
 use Illuminate\Contracts\View\View;
 
-class AuthorShowController extends Controller
+class YearArchiveShowController extends Controller
 {
-    public function __invoke(Author $author): View
+    public function __invoke(int $year): View
     {
+        if ($year < 1900 || $year > 2100) {
+            abort(404);
+        }
+
         $documents = TriDharma::query()
             ->where('status', 'published')
-            ->whereHas('authors', function ($authorQuery) use ($author) {
-                $authorQuery
-                    ->whereNull('authors.deleted_at')
-                    ->where('authors.id', $author->getKey());
-            })
+            ->where('publish_year', $year)
             ->with([
                 'authors' => function ($authorQuery) {
                     $authorQuery->whereNull('authors.deleted_at');
                 },
+                'documentType',
+                'category',
+                'faculty',
+                'studyProgram',
             ])
             ->latest()
-            ->paginate(12)
-            ->withQueryString();
+            ->paginate(12);
 
-        $canonical = route('public.authors.show', $author);
-        $title = Seo::title(['Publikasi '.$author->name]);
-        $description = Seo::description('Daftar dokumen terpublikasi oleh '.$author->name.' di repository institusi: judul, abstrak, tahun, dan unduhan PDF.');
+        $canonical = route('public.years.show', ['year' => $year]);
+        $title = Seo::title(['Dokumen '.$year, 'Arsip Tahun']);
+        $description = Seo::description('Daftar dokumen repository yang terbit pada tahun '.$year.'. Lengkap dengan judul, abstrak, penulis, dan PDF.');
 
         $jsonLd = [
             [
                 '@context' => 'https://schema.org',
-                '@type' => 'Person',
-                'name' => (string) $author->name,
+                '@type' => 'CollectionPage',
+                'name' => 'Arsip Tahun '.$year,
                 'url' => $canonical,
-                'identifier' => $author->identifier ?: null,
-                'image' => $author->image_url ?: null,
+                'inLanguage' => 'id',
             ],
         ];
 
-        return view('public.authors.show', [
-            'author' => $author,
+        return view('public.years.show', [
+            'year' => $year,
             'documents' => $documents,
             'seo' => [
                 'title' => $title,
                 'description' => $description,
                 'canonical' => $canonical,
                 'og' => [
-                    'type' => 'profile',
+                    'type' => 'website',
                     'title' => $title,
                     'description' => $description,
                     'url' => $canonical,

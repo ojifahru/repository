@@ -1,9 +1,9 @@
-<x-public-layouts.app :title="$author->name">
-    <nav class="mb-5 text-sm text-gray-600" aria-label="Breadcrumb">
+<x-public-layouts.app :seo="$seo" :title="$author->name">
+    <nav class="mb-5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-gray-600" aria-label="Breadcrumb">
         <a class="font-medium text-gray-700 hover:text-gray-900 hover:underline"
             href="{{ route('public.documents.index') }}">Dokumen</a>
-        <span class="mx-2 text-gray-300">/</span>
-        <span class="text-gray-900">Author</span>
+        <span class="text-gray-300" aria-hidden="true">/</span>
+        <span class="min-w-0 truncate text-gray-900">Author</span>
     </nav>
 
     <section class="rounded-3xl bg-gradient-to-br from-indigo-50/60 via-white to-white p-6 sm:p-8">
@@ -65,7 +65,7 @@
 
         <div class="mt-6 grid gap-4 md:grid-cols-2">
             @forelse($documents as $doc)
-                <a href="{{ route('public.documents.show', $doc->id) }}"
+                <a href="{{ route('public.repository.show', $doc) }}"
                     class="group rounded-2xl bg-white/80 p-6 shadow-sm ring-1 ring-gray-900/5 transition hover:-translate-y-0.5 hover:bg-white hover:shadow-md hover:ring-indigo-500/15 focus:outline-none focus:ring-4 focus:ring-indigo-500/15">
                     <div class="flex items-start justify-between gap-4">
                         <div class="min-w-0">

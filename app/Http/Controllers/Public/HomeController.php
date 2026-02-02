@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Author;
 use App\Models\Faculty;
 use App\Models\TriDharma;
+use App\Support\Seo\Seo;
 use Illuminate\Contracts\View\View;
 
 class HomeController extends Controller
@@ -29,9 +30,29 @@ class HomeController extends Controller
             ->limit(8)
             ->get();
 
+        $canonical = route('public.home');
+        $title = Seo::title(['Repository Institusi']);
+        $description = Seo::description('Repository institusi kampus untuk skripsi, tesis, jurnal, artikel, dan dokumen TriDharma. Telusuri judul, abstrak, penulis, dan unduh PDF.');
+
+        $jsonLd = [
+            [
+                '@context' => 'https://schema.org',
+                '@type' => 'WebSite',
+                'name' => (string) config('app.name'),
+                'url' => $canonical,
+                'inLanguage' => 'id',
+            ],
+        ];
+
         return view('public.home', [
             'stats' => $stats,
             'latestDocuments' => $latestDocuments,
+            'seo' => [
+                'title' => $title,
+                'description' => $description,
+                'canonical' => $canonical,
+                'jsonLd' => $jsonLd,
+            ],
         ]);
     }
 }

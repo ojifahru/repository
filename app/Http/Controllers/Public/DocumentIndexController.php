@@ -10,7 +10,9 @@ use App\Models\DocumentType;
 use App\Models\Faculty;
 use App\Models\StudyProgram;
 use App\Models\TriDharma;
+use App\Support\Seo\Seo;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Str;
 
 class DocumentIndexController extends Controller
 {
@@ -91,10 +93,32 @@ class DocumentIndexController extends Controller
                 ->pluck('publish_year'),
         ];
 
+        $hasFilters = collect($validated)
+            ->filter(fn ($value) => $value !== null && $value !== '' && $value !== [])
+            ->isNotEmpty();
+
+        $titleParts = ['Dokumen Repository'];
+        if (! empty($validated['publish_year'])) {
+            $titleParts[] = (string) $validated['publish_year'];
+        }
+        if (! empty($validated['q'])) {
+            $titleParts[] = 'Pencarian: '.Str::limit((string) $validated['q'], 30);
+        }
+
+        $title = Seo::title($titleParts);
+
+        $description = Seo::description('Telusuri dokumen repository kampus: judul, abstrak, penulis, tahun, dan filter akademik.');
+
         return view('public.documents.index', [
             'documents' => $documents,
             'filters' => $validated,
             'filterOptions' => $filterOptions,
+            'seo' => [
+                'title' => $title,
+                'description' => $description,
+                'canonical' => route('public.documents.index'),
+                'robots' => $hasFilters ? 'noindex, follow' : null,
+            ],
         ]);
     }
 }

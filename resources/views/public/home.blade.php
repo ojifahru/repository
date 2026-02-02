@@ -1,4 +1,4 @@
-<x-public-layouts.app :title="config('app.name')">
+<x-public-layouts.app :seo="$seo" :title="config('app.name')">
     <section
         class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-50/70 via-white to-white p-6 sm:p-10">
         <div class="pointer-events-none absolute -left-28 -top-24 size-72 rounded-full bg-indigo-500/10 blur-3xl"></div>
@@ -24,18 +24,20 @@
                     <label class="sr-only" for="q">Cari dokumen</label>
                     <div
                         class="group relative rounded-3xl bg-white shadow-lg shadow-indigo-500/10 ring-1 ring-gray-900/5 focus-within:ring-4 focus-within:ring-indigo-500/15">
-                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-5 text-gray-400">
-                            <svg viewBox="0 0 20 20" fill="currentColor" class="size-5" aria-hidden="true">
-                                <path fill-rule="evenodd"
-                                    d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.2 4.31l3.24 3.25a1 1 0 0 1-1.42 1.41l-3.25-3.24A7 7 0 0 1 2 9Z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                        </div>
-
                         <div class="flex flex-col gap-2 p-2 sm:flex-row sm:items-center">
-                            <input id="q" type="text" name="q" value="{{ request('q') }}"
-                                placeholder="Cari judul, abstrak, atau author…"
-                                class="w-full rounded-2xl border-0 bg-transparent py-4 pl-11 pr-4 text-sm text-gray-900 outline-none placeholder:text-gray-400 focus:ring-0">
+                            <div class="relative w-full">
+                                <div class="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-gray-400">
+                                    <svg viewBox="0 0 20 20" fill="currentColor" class="size-5" aria-hidden="true">
+                                        <path fill-rule="evenodd"
+                                            d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.2 4.31l3.24 3.25a1 1 0 0 1-1.42 1.41l-3.25-3.24A7 7 0 0 1 2 9Z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+
+                                <input id="q" type="text" name="q" value="{{ request('q') }}"
+                                    placeholder="Cari judul, abstrak, atau author…"
+                                    class="w-full rounded-2xl border-0 bg-transparent py-4 pl-11 pr-4 text-sm text-gray-900 outline-none placeholder:text-gray-400 focus:ring-0">
+                            </div>
 
                             <button
                                 class="inline-flex w-full items-center justify-center rounded-2xl bg-indigo-600 px-6 py-4 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 sm:w-auto"
@@ -135,7 +137,7 @@
                 <h2 class="text-xl font-semibold tracking-tight text-gray-900">Dokumen Terbaru</h2>
                 <p class="mt-1 text-sm text-gray-600">Kumpulan dokumen yang baru dipublikasikan.</p>
             </div>
-            <a class="inline-flex items-center justify-center rounded-xl bg-white/80 px-4 py-2 text-sm font-semibold text-gray-800 shadow-sm ring-1 ring-gray-900/5 transition hover:bg-white"
+            <a class="inline-flex items-center justify-center rounded-2xl bg-white/80 px-5 py-3 text-sm font-semibold text-gray-800 shadow-sm ring-1 ring-gray-900/5 transition hover:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/15"
                 href="{{ route('public.documents.index') }}">
                 Lihat semua
             </a>
@@ -143,7 +145,7 @@
 
         <div class="mt-6 grid gap-4 md:grid-cols-2">
             @forelse($latestDocuments->take(6) as $doc)
-                <a href="{{ route('public.documents.show', $doc->id) }}"
+                <a href="{{ route('public.repository.show', $doc) }}"
                     class="group rounded-2xl bg-white/80 p-6 shadow-sm ring-1 ring-gray-900/5 transition hover:-translate-y-0.5 hover:bg-white hover:shadow-md hover:ring-indigo-500/15 focus:outline-none focus:ring-4 focus:ring-indigo-500/15">
                     <div class="flex items-start justify-between gap-4">
                         <div class="min-w-0">

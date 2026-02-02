@@ -2,22 +2,30 @@
 
 namespace App\Models;
 
-use Carbon\Traits\Timestamp;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Author extends Model
 {
     use SoftDeletes;
+
     protected $table = 'authors';
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
 
     protected $fillable = [
         'name',
+        'slug',
         'email',
         'bio',
         'image_url',
         'identifier',
     ];
+
     protected $casts = [
         'deleted_at' => 'datetime',
     ];
@@ -30,6 +38,28 @@ class Author extends Model
 
     protected static function booted()
     {
+        static::creating(function (self $author): void {
+            if (! is_string($author->slug) || trim($author->slug) === '') {
+                $base = Str::slug((string) $author->name);
+                $base = $base !== '' ? $base : 'author';
+
+                $candidate = $base;
+                $suffix = 2;
+
+                while (self::query()->where('slug', $candidate)->exists()) {
+                    $candidate = $base.'-'.$suffix;
+                    $suffix++;
+
+                    if ($suffix > 50) {
+                        $candidate = $base.'-'.Str::lower(Str::random(6));
+                        break;
+                    }
+                }
+
+                $author->slug = $candidate;
+            }
+        });
+
         static::deleting(function ($author) {
             if ($author->isForceDeleting()) {
                 $author->triDharmas()->detach();

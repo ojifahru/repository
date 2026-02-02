@@ -1,9 +1,9 @@
-<x-public-layouts.app :title="$document->title ?? 'Dokumen'">
-    <nav class="mb-5 text-sm text-gray-600" aria-label="Breadcrumb">
+<x-public-layouts.app :seo="$seo" :title="$document->title ?? 'Dokumen'">
+    <nav class="mb-5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-gray-600" aria-label="Breadcrumb">
         <a class="font-medium text-gray-700 hover:text-gray-900 hover:underline"
             href="{{ route('public.documents.index') }}">Dokumen</a>
-        <span class="mx-2 text-gray-300">/</span>
-        <span class="text-gray-900">Detail</span>
+        <span class="text-gray-300" aria-hidden="true">/</span>
+        <span class="min-w-0 truncate text-gray-900">Detail</span>
     </nav>
 
     <div class="grid gap-8 md:grid-cols-[1fr_20rem] md:items-start">
@@ -17,7 +17,8 @@
 
                         <div class="mt-3 flex flex-wrap items-center gap-2 text-sm text-gray-600">
                             <span class="font-medium text-gray-700">Author:</span>
-                            <span class="min-w-0">{{ $document->authors->pluck('name')->implode(', ') ?: '-' }}</span>
+                            <span
+                                class="min-w-0 break-words">{{ $document->authors->pluck('name')->implode(', ') ?: '-' }}</span>
                         </div>
 
                         <div class="mt-4 flex flex-wrap gap-2">
@@ -38,8 +39,12 @@
                     </div>
 
                     <div class="flex shrink-0 flex-col gap-2 sm:flex-row">
+                        <a class="inline-flex items-center justify-center rounded-2xl bg-white/80 px-6 py-3 text-sm font-semibold text-gray-800 shadow-sm ring-1 ring-gray-900/5 transition hover:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/15"
+                            href="{{ route('public.repository.pdf', $document) }}" target="_blank" rel="noopener">
+                            Lihat PDF
+                        </a>
                         <a class="inline-flex items-center justify-center rounded-2xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500/20"
-                            href="{{ route('public.documents.download', $document->id) }}">
+                            href="{{ route('public.repository.download', $document) }}">
                             Download
                         </a>
                         <a class="inline-flex items-center justify-center rounded-2xl bg-white/80 px-6 py-3 text-sm font-semibold text-gray-800 shadow-sm ring-1 ring-gray-900/5 transition hover:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/15"
@@ -64,17 +69,30 @@
         </div>
 
         <aside class="space-y-4">
-            <div class="sticky top-24 rounded-3xl bg-white/80 p-6 shadow-sm ring-1 ring-gray-900/5">
+            <div class="rounded-3xl bg-white/80 p-6 shadow-sm ring-1 ring-gray-900/5 md:sticky md:top-24">
                 <div class="text-sm font-semibold text-gray-900">Informasi</div>
                 <div class="mt-4 space-y-3 text-sm">
                     <div class="flex items-start justify-between gap-4">
                         <span class="text-gray-600">Fakultas</span>
-                        <span class="text-right font-medium text-gray-900">{{ $document->faculty?->name ?? '-' }}</span>
+                        @if ($document->faculty)
+                            <a class="rounded-lg text-right font-medium text-indigo-700 hover:underline focus:outline-none focus:ring-4 focus:ring-indigo-500/15"
+                                href="{{ route('public.faculties.show', $document->faculty) }}">
+                                {{ $document->faculty->name }}
+                            </a>
+                        @else
+                            <span class="text-right font-medium text-gray-900">-</span>
+                        @endif
                     </div>
                     <div class="flex items-start justify-between gap-4">
                         <span class="text-gray-600">Program Studi</span>
-                        <span
-                            class="text-right font-medium text-gray-900">{{ $document->studyProgram?->name ?? '-' }}</span>
+                        @if ($document->studyProgram)
+                            <a class="rounded-lg text-right font-medium text-indigo-700 hover:underline focus:outline-none focus:ring-4 focus:ring-indigo-500/15"
+                                href="{{ route('public.study-programs.show', $document->studyProgram) }}">
+                                {{ $document->studyProgram->name }}
+                            </a>
+                        @else
+                            <span class="text-right font-medium text-gray-900">-</span>
+                        @endif
                     </div>
                     <div class="flex items-start justify-between gap-4">
                         <span class="text-gray-600">Ukuran File</span>

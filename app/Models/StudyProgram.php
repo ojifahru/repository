@@ -13,6 +13,11 @@ class StudyProgram extends Model
 
     protected $table = 'study_programs';
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     protected $fillable = [
         'name',
         'faculty_id',

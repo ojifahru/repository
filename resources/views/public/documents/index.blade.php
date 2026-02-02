@@ -1,4 +1,4 @@
-<x-public-layouts.app title="Dokumen">
+<x-public-layouts.app :seo="$seo" title="Dokumen">
     <form action="{{ route('public.documents.index') }}" method="get">
         <div class="rounded-3xl bg-gradient-to-br from-indigo-50/60 via-white to-white p-6 sm:p-8">
             <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
@@ -12,6 +12,12 @@
                     <span class="rounded-full bg-white/70 px-3 py-1 shadow-sm ring-1 ring-gray-900/5">
                         {{ $documents->total() }} hasil
                     </span>
+
+                    <button
+                        class="inline-flex items-center justify-center rounded-full bg-white/80 px-4 py-2 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-gray-900/5 transition hover:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/15 md:hidden"
+                        type="button" data-drawer-open="doc-filters">
+                        Filter
+                    </button>
                 </div>
             </div>
 
@@ -20,18 +26,20 @@
                 <div class="mx-auto max-w-4xl">
                     <div
                         class="relative rounded-3xl bg-white shadow-lg shadow-indigo-500/10 ring-1 ring-gray-900/5 focus-within:ring-4 focus-within:ring-indigo-500/15">
-                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-5 text-gray-400">
-                            <svg viewBox="0 0 20 20" fill="currentColor" class="size-5" aria-hidden="true">
-                                <path fill-rule="evenodd"
-                                    d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.2 4.31l3.24 3.25a1 1 0 0 1-1.42 1.41l-3.25-3.24A7 7 0 0 1 2 9Z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                        </div>
-
                         <div class="flex flex-col gap-2 p-2 sm:flex-row sm:items-center">
-                            <input id="q" type="text" name="q" value="{{ $filters['q'] ?? '' }}"
-                                placeholder="Cari judul, abstrak, author…"
-                                class="w-full rounded-2xl border-0 bg-transparent py-4 pl-11 pr-4 text-sm text-gray-900 outline-none placeholder:text-gray-400 focus:ring-0">
+                            <div class="relative w-full">
+                                <div class="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-gray-400">
+                                    <svg viewBox="0 0 20 20" fill="currentColor" class="size-5" aria-hidden="true">
+                                        <path fill-rule="evenodd"
+                                            d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.2 4.31l3.24 3.25a1 1 0 0 1-1.42 1.41l-3.25-3.24A7 7 0 0 1 2 9Z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+
+                                <input id="q" type="text" name="q" value="{{ $filters['q'] ?? '' }}"
+                                    placeholder="Cari judul, abstrak, author…"
+                                    class="w-full rounded-2xl border-0 bg-transparent py-4 pl-11 pr-4 text-sm text-gray-900 outline-none placeholder:text-gray-400 focus:ring-0">
+                            </div>
 
                             <button
                                 class="inline-flex w-full items-center justify-center rounded-2xl bg-indigo-600 px-6 py-4 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 sm:w-auto"
@@ -46,30 +54,38 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            <details class="mt-5 md:hidden">
-                <summary class="list-none">
-                    <span
-                        class="inline-flex w-full items-center justify-between rounded-2xl bg-white/80 px-4 py-3 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-gray-900/5">
-                        Filter
-                        <svg viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-500" aria-hidden="true">
-                            <path fill-rule="evenodd"
-                                d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08Z"
-                                clip-rule="evenodd" />
-                        </svg>
-                    </span>
-                </summary>
-                <div class="mt-3 rounded-2xl bg-white/80 p-5 shadow-sm ring-1 ring-gray-900/5">
+        <div class="fixed inset-0 z-[60] hidden md:hidden" data-drawer="doc-filters" role="dialog" aria-modal="true"
+            aria-labelledby="docFiltersTitle">
+            <button class="absolute inset-0 bg-gray-900/30" type="button" data-drawer-close="doc-filters"
+                aria-label="Tutup filter"></button>
+
+            <div
+                class="absolute inset-x-0 bottom-0 max-h-[85vh] overflow-y-auto rounded-t-3xl bg-white p-5 shadow-2xl ring-1 ring-gray-900/10">
+                <div class="flex items-center justify-between gap-4">
+                    <div>
+                        <div id="docFiltersTitle" class="text-base font-semibold text-gray-900">Filter Dokumen</div>
+                        <div class="mt-0.5 text-xs text-gray-600">Gunakan metadata untuk mempersempit hasil.</div>
+                    </div>
+                    <button
+                        class="inline-flex items-center justify-center rounded-2xl bg-white px-4 py-2 text-sm font-semibold text-gray-800 ring-1 ring-gray-900/5 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-indigo-500/15"
+                        type="button" data-drawer-close="doc-filters">
+                        Tutup
+                    </button>
+                </div>
+
+                <div class="mt-5 rounded-2xl bg-white">
                     @include('public.documents._filters')
                 </div>
-            </details>
+            </div>
         </div>
 
         <div class="mt-8 grid gap-8 md:grid-cols-[1fr_20rem] md:items-start">
             <div>
                 <div class="grid gap-4 md:grid-cols-2">
                     @forelse($documents as $doc)
-                        <a href="{{ route('public.documents.show', $doc->id) }}"
+                        <a href="{{ route('public.repository.show', $doc) }}"
                             class="group rounded-2xl bg-white/80 p-6 shadow-sm ring-1 ring-gray-900/5 transition hover:-translate-y-0.5 hover:bg-white hover:shadow-md hover:ring-indigo-500/15 focus:outline-none focus:ring-4 focus:ring-indigo-500/15">
                             <div class="flex items-start justify-between gap-4">
                                 <div class="min-w-0">

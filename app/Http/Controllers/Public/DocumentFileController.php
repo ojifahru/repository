@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class DocumentDownloadController extends Controller
+class DocumentFileController extends Controller
 {
     public function __invoke(TriDharma $document): StreamedResponse
     {
@@ -26,12 +26,12 @@ class DocumentDownloadController extends Controller
             abort(404);
         }
 
-        $document->increment('download_count');
-
         $extension = pathinfo($path, PATHINFO_EXTENSION);
         $baseName = $document->title ? Str::slug($document->title, '_') : pathinfo($path, PATHINFO_FILENAME);
         $downloadName = $extension !== '' ? $baseName.'.'.$extension : $baseName;
 
-        return Storage::disk($disk)->download($path, $downloadName);
+        return Storage::disk($disk)->response($path, $downloadName, [
+            'Content-Disposition' => 'inline; filename="'.$downloadName.'"',
+        ]);
     }
 }
