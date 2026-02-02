@@ -1,6 +1,6 @@
-# Repository Tri Dharma
+# OF Digital repository
 
-Aplikasi ini adalah **repository dokumen Tri Dharma** (mis. penelitian) berbasis Laravel + Filament.
+Aplikasi ini adalah **OF Digital repository** — repository dokumen Tri Dharma (mis. penelitian) berbasis Laravel + Filament.
 
 Tujuan utamanya:
 
