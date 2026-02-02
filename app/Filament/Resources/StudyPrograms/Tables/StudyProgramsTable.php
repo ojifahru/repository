@@ -2,9 +2,7 @@
 
 namespace App\Filament\Resources\StudyPrograms\Tables;
 
-use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
@@ -26,10 +24,16 @@ class StudyProgramsTable
                     ->weight('medium')
                     ->description(fn($record) => $record->faculty?->name),
 
-                TextColumn::make('degree')
+                TextColumn::make('degree.name')
                     ->label('Jenjang')
                     ->badge()
                     ->color('primary')
+                    ->sortable(),
+
+                TextColumn::make('programType.name')
+                    ->label('Tipe Program')
+                    ->badge()
+                    ->color('gray')
                     ->sortable(),
 
                 TextColumn::make('kode')
@@ -48,6 +52,14 @@ class StudyProgramsTable
                 SelectFilter::make('faculty_id')
                     ->label('Fakultas')
                     ->relationship('faculty', 'name'),
+
+                SelectFilter::make('degree_id')
+                    ->label('Jenjang')
+                    ->relationship('degree', 'name'),
+
+                SelectFilter::make('program_type_id')
+                    ->label('Tipe Program')
+                    ->relationship('programType', 'name'),
             ])
 
             // ================= ACTION =================
@@ -55,27 +67,23 @@ class StudyProgramsTable
                 EditAction::make()
                     ->label('ubah')
                     ->visible(
-                        fn($record) =>
-                        auth()->user()->can('Update:StudyProgram')
+                        fn($record) => auth()->user()->can('Update:StudyProgram')
                     ),
                 RestoreAction::make()
                     ->label('pulihkan')
                     ->visible(
-                        fn($record) =>
-                        !is_null($record->deleted_at)
+                        fn($record) => ! is_null($record->deleted_at)
                             && auth()->user()->can('Restore:StudyProgram')
                     ),
                 DeleteAction::make()
                     ->label('hapus')
                     ->visible(
-                        fn($record) =>
-                        auth()->user()->can('Delete:StudyProgram')
+                        fn($record) => auth()->user()->can('Delete:StudyProgram')
                     ),
                 ForceDeleteAction::make()
                     ->label('hapus permanen')
                     ->visible(
-                        fn($record) =>
-                        !is_null($record->deleted_at)
+                        fn($record) => ! is_null($record->deleted_at)
                             && auth()->user()->can('ForceDelete:StudyProgram')
                     ),
             ])

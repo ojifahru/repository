@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\StudyPrograms\Schemas;
 
+use App\Models\Degree;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
@@ -25,30 +26,45 @@ class StudyProgramForm
                             ->maxLength(255)
                             ->live(onBlur: true)
                             ->afterStateUpdated(
-                                fn($state, callable $set) =>
-                                $set('slug', Str::slug($state))
+                                fn($state, callable $set, callable $get) => $set('slug', self::generateSlug((string) $state, self::resolveDegreeSuffix($get('degree_id'))))
                             ),
 
-                        Select::make('degree')
+                        Select::make('degree_id')
                             ->label('Jenjang')
                             ->required()
-                            ->options([
-                                'Bachelor' => 'Sarjana (S1)',
-                                'Master' => 'Magister (S2)',
-                                'Doctorate' => 'Doktor (S3)',
-                            ])
-                            ->native(false),
+                            ->relationship('degree', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->native(false)
+                            ->live()
+                            ->afterStateUpdated(
+                                fn($state, callable $set, callable $get) => $set('slug', self::generateSlug((string) $get('name'), self::resolveDegreeSuffix($state)))
+                            ),
+
+                        Select::make('program_type_id')
+                            ->label('Tipe Program')
+                            ->relationship('programType', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->native(false)
+                            ->createOptionForm([
+                                TextInput::make('name')
+                                    ->label('Nama')
+                                    ->required()
+                                    ->maxLength(100),
+
+                                TextInput::make('code')
+                                    ->label('Kode')
+                                    ->maxLength(30)
+                                    ->unique(ignoreRecord: true),
+                            ]),
 
                         Select::make('faculty_id')
                             ->label('Fakultas')
                             ->relationship('faculty', 'name')
                             ->searchable()
-                            ->required(),
-
-                        TextInput::make('kode')
-                            ->label('Kode')
                             ->required()
-                            ->maxLength(10),
+                            ->preload(),
 
                         TextInput::make('slug')
                             ->label('Slug')
@@ -58,5 +74,21 @@ class StudyProgramForm
                             ->helperText('Digunakan untuk URL program studi'),
                     ]),
             ]);
+    }
+
+    private static function resolveDegreeSuffix(mixed $degreeId): string
+    {
+        if (! is_numeric($degreeId)) {
+            return '';
+        }
+
+        return (string) (Degree::query()->whereKey((int) $degreeId)->value('slug_suffix') ?? '');
+    }
+
+    private static function generateSlug(string $name, string $degreeSuffix): string
+    {
+        $slug = Str::slug(trim($name . ' ' . $degreeSuffix));
+
+        return Str::limit($slug, 150, '');
     }
 }

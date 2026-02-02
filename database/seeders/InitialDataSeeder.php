@@ -5,8 +5,8 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class InitialDataSeeder extends Seeder
 {
@@ -83,6 +83,28 @@ class InitialDataSeeder extends Seeder
             'RestoreAny:StudyProgram',
             'Replicate:StudyProgram',
             'Reorder:StudyProgram',
+            'ViewAny:Degree',
+            'View:Degree',
+            'Create:Degree',
+            'Update:Degree',
+            'Delete:Degree',
+            'Restore:Degree',
+            'ForceDelete:Degree',
+            'ForceDeleteAny:Degree',
+            'RestoreAny:Degree',
+            'Replicate:Degree',
+            'Reorder:Degree',
+            'ViewAny:ProgramType',
+            'View:ProgramType',
+            'Create:ProgramType',
+            'Update:ProgramType',
+            'Delete:ProgramType',
+            'Restore:ProgramType',
+            'ForceDelete:ProgramType',
+            'ForceDeleteAny:ProgramType',
+            'RestoreAny:ProgramType',
+            'Replicate:ProgramType',
+            'Reorder:ProgramType',
             'ViewAny:TriDharma',
             'View:TriDharma',
             'Create:TriDharma',
