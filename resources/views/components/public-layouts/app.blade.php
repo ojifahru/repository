@@ -55,8 +55,9 @@
                 <div class="flex items-center gap-3">
                     <span
                         class="flex h-8 w-[120px] items-center justify-center rounded-xl bg-white px-2 ring-1 ring-gray-200/60">
-                        <img class="h-6 w-auto max-w-full object-contain" src="{{ asset('images/logo.png') }}"
-                            alt="Logo {{ config('app.name') }}">
+                        <a href="https://github.com/ojifahru/of-digital-repository"><img
+                                class="h-6 w-auto max-w-full object-contain" src="{{ asset('images/logo.png') }}"
+                                alt="Logo {{ config('app.name') }}"></a>
                     </span>
                     <div>
                         <div class="font-medium text-gray-900">{{ config('app.name') }}</div>
