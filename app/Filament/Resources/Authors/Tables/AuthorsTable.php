@@ -16,6 +16,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Storage;
 
 
 class AuthorsTable
@@ -32,13 +33,27 @@ class AuthorsTable
                 ImageColumn::make('image_url')
                     ->label('Foto')
                     ->circular()
-                    ->disk('public')
                     ->imageSize(40)
+                    ->getStateUsing(function ($record): ?string {
+                        if (empty($record->image_url)) {
+                            return null;
+                        }
+
+                        if (! Storage::disk('public')->exists($record->image_url)) {
+                            return null;
+                        }
+
+                        return $record->image_url;
+                    })
+                    ->disk('public')
                     ->defaultImageUrl(
-                        fn($record) =>
-                        $record->image_url
-                            ? null
-                            : 'https://ui-avatars.com/api/?name=' . urlencode($record->name)
+                        function ($record): ?string {
+                            if (! empty($record->image_url) && Storage::disk('public')->exists($record->image_url)) {
+                                return null;
+                            }
+
+                            return 'https://ui-avatars.com/api/?name=' . urlencode($record->name);
+                        }
                     ),
 
                 TextColumn::make('name')

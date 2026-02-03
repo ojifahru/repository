@@ -54,9 +54,12 @@
                         </x-ui.badge>
                     </div>
 
-                    @if (!empty($doc->abstract))
+                    @php
+                        $abstractPreview = trim(strip_tags((string) $doc->abstract));
+                    @endphp
+                    @if ($abstractPreview !== '')
                         <p class="mt-4 text-sm leading-relaxed text-gray-700">
-                            {{ \Illuminate\Support\Str::limit($doc->abstract, 180) }}
+                            {{ \Illuminate\Support\Str::limit($abstractPreview, 180) }}
                         </p>
                     @endif
                 </a>

@@ -11,6 +11,7 @@ class TriDharmaPerYear extends ChartWidget
     protected int | string | array $columnSpan = 'full';
 
     protected ?string $heading = 'Tri Dharma Per Tahun';
+    protected ?string $maxHeight = '300px';
 
     protected ?string $description = 'Distribusi dokumen Tri Dharma per tahun publikasi';
 

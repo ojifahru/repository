@@ -11,8 +11,8 @@
             <div class="flex items-start gap-4">
                 <div
                     class="flex size-16 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-900/5">
-                    @if (!empty($author->image_url))
-                        <img class="h-full w-full object-cover" src="{{ $author->image_url }}"
+                    @if (!empty($authorImageUrl))
+                        <img class="h-full w-full object-cover" src="{{ $authorImageUrl }}"
                             alt="Foto {{ $author->name }}">
                     @else
                         <span class="text-xl font-semibold text-indigo-700">{{ mb_substr($author->name, 0, 1) }}</span>
@@ -41,15 +41,18 @@
             </a>
         </div>
 
-        @if (!empty($author->bio))
+        @php
+            $bioText = trim(strip_tags((string) $author->bio));
+        @endphp
+        @if ($bioText !== '')
             <div
                 class="mt-6 max-w-3xl rounded-2xl bg-white/70 p-5 text-sm leading-relaxed text-gray-700 shadow-sm ring-1 ring-gray-900/5">
                 <div class="flex items-center gap-2">
                     <span class="size-2 rounded-full bg-indigo-600"></span>
                     <div class="text-sm font-semibold text-gray-900">Bio</div>
                 </div>
-                <div class="mt-3 whitespace-pre-line">
-                    {{ $author->bio }}
+                <div class="mt-3 rich-content">
+                    {!! $author->bio !!}
                 </div>
             </div>
         @endif

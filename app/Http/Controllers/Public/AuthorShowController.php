@@ -7,6 +7,7 @@ use App\Models\Author;
 use App\Models\TriDharma;
 use App\Support\Seo\Seo;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Storage;
 
 class AuthorShowController extends Controller
 {
@@ -28,6 +29,11 @@ class AuthorShowController extends Controller
             ->paginate(12)
             ->withQueryString();
 
+        $authorImageUrl = null;
+        if (! empty($author->image_url) && Storage::disk('public')->exists($author->image_url)) {
+            $authorImageUrl = Storage::disk('public')->url($author->image_url);
+        }
+
         $canonical = route('public.authors.show', $author);
         $title = Seo::title(['Publikasi '.$author->name]);
         $description = Seo::description('Daftar dokumen terpublikasi oleh '.$author->name.' di repository institusi: judul, abstrak, tahun, dan unduhan PDF.');
@@ -39,12 +45,13 @@ class AuthorShowController extends Controller
                 'name' => (string) $author->name,
                 'url' => $canonical,
                 'identifier' => $author->identifier ?: null,
-                'image' => $author->image_url ?: null,
+                'image' => $authorImageUrl,
             ],
         ];
 
         return view('public.authors.show', [
             'author' => $author,
+            'authorImageUrl' => $authorImageUrl,
             'documents' => $documents,
             'seo' => [
                 'title' => $title,

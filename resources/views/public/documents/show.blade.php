@@ -55,15 +55,18 @@
                 </div>
             </section>
 
-            @if (!empty($document->abstract))
+            @php
+                $abstractText = trim(strip_tags((string) $document->abstract));
+            @endphp
+            @if ($abstractText !== '')
                 <section class="rounded-3xl bg-white/80 p-6 shadow-sm ring-1 ring-gray-900/5 sm:p-8">
                     <div class="flex items-center gap-2">
                         <span class="size-2 rounded-full bg-indigo-600"></span>
                         <h2 class="text-lg font-semibold tracking-tight text-gray-900">Abstrak</h2>
                     </div>
-                    <p class="mt-4 whitespace-pre-line text-sm leading-relaxed text-gray-700">
-                        {{ $document->abstract }}
-                    </p>
+                    <div class="mt-4 rich-content">
+                        {!! $document->abstract !!}
+                    </div>
                 </section>
             @endif
         </div>

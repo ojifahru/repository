@@ -59,13 +59,19 @@
     <section class="mt-8">
         <div class="grid gap-4 md:grid-cols-2">
             @forelse($authors as $author)
+                @php
+                    $authorImageUrl = null;
+                    if (!empty($author->image_url) && \Illuminate\Support\Facades\Storage::disk('public')->exists($author->image_url)) {
+                        $authorImageUrl = \Illuminate\Support\Facades\Storage::disk('public')->url($author->image_url);
+                    }
+                @endphp
                 <a href="{{ route('public.authors.show', $author) }}"
                     class="group rounded-2xl bg-white/80 p-6 shadow-sm ring-1 ring-gray-900/5 transition hover:-translate-y-0.5 hover:bg-white hover:shadow-md hover:ring-indigo-500/15 focus:outline-none focus:ring-4 focus:ring-indigo-500/15">
                     <div class="flex items-start gap-4">
                         <div
                             class="flex size-12 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-900/5">
-                            @if (!empty($author->image_url))
-                                <img class="h-full w-full object-cover" src="{{ $author->image_url }}"
+                            @if ($authorImageUrl)
+                                <img class="h-full w-full object-cover" src="{{ $authorImageUrl }}"
                                     alt="Foto {{ $author->name }}">
                             @else
                                 <span

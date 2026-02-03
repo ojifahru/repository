@@ -4,7 +4,7 @@ namespace App\Filament\Resources\Authors\Schemas;
 
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\RichEditor;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
@@ -39,9 +39,15 @@ class AuthorForm
                             ->unique(ignoreRecord: true)
                             ->columnSpan(2),
 
-                        Textarea::make('bio')
+                        RichEditor::make('bio')
                             ->label('Bio Singkat')
-                            ->rows(4)
+                            ->toolbarButtons([
+                                ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link'],
+                                ['h2', 'h3', 'alignStart', 'alignCenter', 'alignEnd'],
+                                ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
+                                ['table'],
+                                ['undo', 'redo'],
+                            ])
                             ->maxLength(500)
                             ->columnSpan(2),
 
