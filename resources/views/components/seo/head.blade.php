@@ -3,6 +3,10 @@
 ])
 
 @php
+    if (!is_array($seo)) {
+        $seo = [];
+    }
+
     $title = $seo['title'] ?? config('app.name');
     $description = $seo['description'] ?? null;
     $canonical = $seo['canonical'] ?? url()->current();
@@ -11,6 +15,10 @@
     $og = $seo['og'] ?? [];
     $scholar = $seo['scholar'] ?? [];
     $jsonLd = $seo['jsonLd'] ?? [];
+
+    if (!is_array($og)) {
+        $og = [];
+    }
 
     if (!is_array($scholar)) {
         $scholar = [];
@@ -61,6 +69,6 @@
 
 @foreach ($jsonLd as $block)
     @if (is_array($block))
-        <script type="application/ld+json">{!! json_encode($block, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+        <script type="application/ld+json">@json($block, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)</script>
     @endif
 @endforeach

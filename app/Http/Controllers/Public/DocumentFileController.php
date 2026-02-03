@@ -27,7 +27,11 @@ class DocumentFileController extends Controller
         }
 
         $extension = pathinfo($path, PATHINFO_EXTENSION);
-        $baseName = $document->title ? Str::slug($document->title, '_') : pathinfo($path, PATHINFO_FILENAME);
+        $baseNameSource = $document->title ?: pathinfo($path, PATHINFO_FILENAME);
+        $baseName = Str::slug((string) $baseNameSource, '_');
+        if ($baseName === '') {
+            $baseName = 'document';
+        }
         $downloadName = $extension !== '' ? $baseName.'.'.$extension : $baseName;
 
         return Storage::disk($disk)->response($path, $downloadName, [
