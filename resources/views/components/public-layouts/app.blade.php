@@ -9,14 +9,30 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    {{-- Favicon --}}
-    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
+    @php
+        $seoData = is_array($seo) ? $seo : [];
+        $seoData['title'] = $seoData['title'] ?? ($title ?? config('app.name'));
 
-	    @php
-	        $seoData = is_array($seo) ? $seo : [];
-	        $seoData['title'] = $seoData['title'] ?? ($title ?? config('app.name'));
-	        $logoAsset = file_exists(public_path('images/logo.png')) ? 'images/logo.png' : 'images/logo_real.png';
-	    @endphp
+        $logoAsset = file_exists(public_path('images/logo.png')) ? 'images/logo.png' : 'images/logo_real.png';
+        $logoStoragePath = 'uploads/logo.png';
+        $faviconStoragePath = 'uploads/favicon.png';
+
+        $logoUrl = null;
+        if (\Illuminate\Support\Facades\Storage::disk('public')->exists($logoStoragePath)) {
+            $logoUrl = \Illuminate\Support\Facades\Storage::disk('public')->url($logoStoragePath);
+        }
+
+        $faviconUrl = null;
+        if (\Illuminate\Support\Facades\Storage::disk('public')->exists($faviconStoragePath)) {
+            $faviconUrl = \Illuminate\Support\Facades\Storage::disk('public')->url($faviconStoragePath);
+        }
+
+        $logoUrl = $logoUrl ?: asset($logoAsset);
+        $faviconUrl = $faviconUrl ?: asset('images/favicon.png');
+    @endphp
+
+    {{-- Favicon --}}
+    <link rel="icon" type="image/png" href="{{ $faviconUrl }}">
 
     <x-seo.head :seo="$seoData" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -33,7 +49,7 @@
             <a href="{{ route('public.home') }}" class="group flex items-center gap-3">
                 <span
                     class="flex h-11 w-[148px] items-center justify-center rounded-2xl bg-white px-3 ring-1 ring-gray-200/60 sm:w-[170px]">
-	                    <img class="h-8 w-auto max-w-full object-contain" src="{{ asset($logoAsset) }}"
+	                    <img class="h-8 w-auto max-w-full object-contain" src="{{ $logoUrl }}"
 	                        alt="Logo {{ config('app.name') }}">
                 </span>
                 <span class="leading-tight">
@@ -115,7 +131,7 @@
                     <span
                         class="flex h-8 w-[120px] items-center justify-center rounded-xl bg-white px-2 ring-1 ring-gray-200/60">
 	                        <a href="https://github.com/ojifahru/of-digital-repository"><img
-	                                class="h-6 w-auto max-w-full object-contain" src="{{ asset($logoAsset) }}"
+	                                class="h-6 w-auto max-w-full object-contain" src="{{ $logoUrl }}"
 	                                alt="Logo {{ config('app.name') }}"></a>
                     </span>
                     <div>
