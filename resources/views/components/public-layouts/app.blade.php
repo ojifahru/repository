@@ -12,10 +12,11 @@
     {{-- Favicon --}}
     <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
 
-    @php
-        $seoData = is_array($seo) ? $seo : [];
-        $seoData['title'] = $seoData['title'] ?? ($title ?? config('app.name'));
-    @endphp
+	    @php
+	        $seoData = is_array($seo) ? $seo : [];
+	        $seoData['title'] = $seoData['title'] ?? ($title ?? config('app.name'));
+	        $logoAsset = file_exists(public_path('images/logo.png')) ? 'images/logo.png' : 'images/logo_real.png';
+	    @endphp
 
     <x-seo.head :seo="$seoData" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -32,8 +33,8 @@
             <a href="{{ route('public.home') }}" class="group flex items-center gap-3">
                 <span
                     class="flex h-11 w-[148px] items-center justify-center rounded-2xl bg-white px-3 ring-1 ring-gray-200/60 sm:w-[170px]">
-                    <img class="h-8 w-auto max-w-full object-contain" src="{{ asset('images/logo.png') }}"
-                        alt="Logo {{ config('app.name') }}">
+	                    <img class="h-8 w-auto max-w-full object-contain" src="{{ asset($logoAsset) }}"
+	                        alt="Logo {{ config('app.name') }}">
                 </span>
                 <span class="leading-tight">
                     <span class="block text-sm font-semibold text-gray-900 sm:text-base">
@@ -113,9 +114,9 @@
                 <div class="flex items-center gap-3">
                     <span
                         class="flex h-8 w-[120px] items-center justify-center rounded-xl bg-white px-2 ring-1 ring-gray-200/60">
-                        <a href="https://github.com/ojifahru/of-digital-repository"><img
-                                class="h-6 w-auto max-w-full object-contain" src="{{ asset('images/logo.png') }}"
-                                alt="Logo {{ config('app.name') }}"></a>
+	                        <a href="https://github.com/ojifahru/of-digital-repository"><img
+	                                class="h-6 w-auto max-w-full object-contain" src="{{ asset($logoAsset) }}"
+	                                alt="Logo {{ config('app.name') }}"></a>
                     </span>
                     <div>
                         <div class="font-medium text-gray-900">{{ config('app.name') }}</div>
