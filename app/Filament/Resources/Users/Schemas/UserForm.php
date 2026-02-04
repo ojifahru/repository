@@ -2,11 +2,13 @@
 
 namespace App\Filament\Resources\Users\Schemas;
 
+use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Actions\Action;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class UserForm
@@ -41,9 +43,32 @@ class UserForm
 
                         Select::make('roles')
                             ->label('Role')
-                            ->relationship('roles', 'name')
+                            ->relationship(
+                                name: 'roles',
+                                titleAttribute: 'name',
+                                modifyQueryUsing: function (Builder $query): Builder {
+                                    $user = Auth::user();
+                                    $isCreating = blank(request()->route('record'));
+
+                                    if ($isCreating && $user?->hasRole('admin') && ! $user->hasRole('super_admin')) {
+                                        return $query->where('name', 'editor');
+                                    }
+
+                                    return $query;
+                                },
+                            )
                             ->preload()
                             ->searchable()
+                            ->helperText(function (): ?string {
+                                $user = Auth::user();
+                                $isCreating = blank(request()->route('record'));
+
+                                if ($isCreating && $user?->hasRole('admin') && ! $user->hasRole('super_admin')) {
+                                    return 'Admin hanya bisa membuat user dengan role editor.';
+                                }
+
+                                return null;
+                            })
                             ->required(),
                     ]),
 
@@ -56,9 +81,9 @@ class UserForm
                             ->label('Password')
                             ->password()
                             ->maxLength(255)
-                            ->required(fn($context) => $context === 'create')
-                            ->dehydrated(fn($state) => filled($state))
-                            ->dehydrateStateUsing(fn($state) => bcrypt($state))
+                            ->required(fn ($context) => $context === 'create')
+                            ->dehydrated(fn ($state) => filled($state))
+                            ->dehydrateStateUsing(fn ($state) => bcrypt($state))
                             ->confirmed()
                             ->autocomplete('new-password')
                             ->revealable()
@@ -71,7 +96,6 @@ class UserForm
                                         $set('password', $password);
                                     })
                             ),
-
 
                         TextInput::make('password_confirmation')
                             ->label('Konfirmasi Password')

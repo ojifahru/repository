@@ -2,21 +2,27 @@
 
 namespace App\Filament\Resources\Users\Tables;
 
-use Filament\Actions\BulkActionGroup;
+use App\Filament\Resources\Users\UserResource;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteAction;
-use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreAction;
-use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class UsersTable
 {
     public static function configure(Table $table): Table
     {
+        $canAdminManageRecord = function ($user, $record): bool {
+            if ($record->getKey() === $user->getKey()) {
+                return true;
+            }
+
+            return $record->hasRole('editor') && ! $record->hasAnyRole(['admin', 'super_admin']);
+        };
+
         return $table
             ->columns([
 
@@ -25,7 +31,7 @@ class UsersTable
                     ->searchable()
                     ->sortable()
                     ->weight('medium')
-                    ->description(fn($record) => $record->email),
+                    ->description(fn ($record) => $record->email),
 
                 TextColumn::make('roles.name')
                     ->label('Role')
@@ -38,33 +44,102 @@ class UsersTable
                     ]),
             ])
 
+            ->recordUrl(function ($record) use ($canAdminManageRecord): ?string {
+                $user = Auth::user();
+
+                if (! $user?->can('Update:User')) {
+                    return null;
+                }
+
+                if ($user->hasRole('admin') && ! $user->hasRole('super_admin')) {
+                    return $canAdminManageRecord($user, $record)
+                        ? UserResource::getUrl('edit', ['record' => $record])
+                        : null;
+                }
+
+                return UserResource::getUrl('edit', ['record' => $record]);
+            })
+
             ->recordActions([
                 EditAction::make()
                     ->label('ubah')
                     ->visible(
-                        fn($record) =>
-                        auth()->user()->can('Update:User')
+                        function ($record) use ($canAdminManageRecord): bool {
+                            $user = Auth::user();
+
+                            if (! $user?->can('Update:User')) {
+                                return false;
+                            }
+
+                            if ($user->hasRole('admin') && ! $user->hasRole('super_admin')) {
+                                return $canAdminManageRecord($user, $record);
+                            }
+
+                            return true;
+                        }
                     ),
                 RestoreAction::make()
                     ->label('pulihkan')
                     ->visible(
-                        fn($record) =>
-                        !is_null($record->deleted_at)
-                            && auth()->user()->can('Restore:User')
+                        function ($record) use ($canAdminManageRecord): bool {
+                            $user = Auth::user();
+
+                            if (is_null($record->deleted_at)) {
+                                return false;
+                            }
+
+                            if (! $user?->can('Restore:User')) {
+                                return false;
+                            }
+
+                            if ($user->hasRole('admin') && ! $user->hasRole('super_admin')) {
+                                return $canAdminManageRecord($user, $record);
+                            }
+
+                            return true;
+                        }
                     ),
                 DeleteAction::make()
                     ->label('hapus')
                     ->visible(
-                        fn($record) =>
-                        is_null($record->deleted_at)
-                            && auth()->user()->can('Delete:User')
+                        function ($record) use ($canAdminManageRecord): bool {
+                            $user = Auth::user();
+
+                            if (! is_null($record->deleted_at)) {
+                                return false;
+                            }
+
+                            if (! $user?->can('Delete:User')) {
+                                return false;
+                            }
+
+                            if ($user->hasRole('admin') && ! $user->hasRole('super_admin')) {
+                                return $canAdminManageRecord($user, $record);
+                            }
+
+                            return true;
+                        }
                     ),
                 ForceDeleteAction::make()
                     ->label('hapus permanen')
                     ->visible(
-                        fn($record) =>
-                        !is_null($record->deleted_at)
-                            && auth()->user()->can('ForceDelete:User')
+                        function ($record) use ($canAdminManageRecord): bool {
+                            $user = Auth::user();
+
+                            if (is_null($record->deleted_at)) {
+                                return false;
+                            }
+
+                            if (! $user?->can('ForceDelete:User')) {
+                                return false;
+                            }
+
+                            if ($user->hasRole('admin') && ! $user->hasRole('super_admin')) {
+                                return $canAdminManageRecord($user, $record);
+                            }
+
+                            return true;
+                        }
                     ),
             ])
 
