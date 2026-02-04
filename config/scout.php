@@ -33,6 +33,13 @@ return [
                     'publish_year',
                 ],
             ],
+            'authors' => [
+                'searchableAttributes' => [
+                    'name',
+                    'bio',
+                    'identifier',
+                ],
+            ],
         ],
     ],
 ];

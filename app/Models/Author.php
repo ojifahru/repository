@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use Laravel\Scout\Searchable;
 
 class Author extends Model
 {
-    use SoftDeletes;
+    use Searchable, SoftDeletes;
 
     protected $table = 'authors';
 
@@ -65,5 +66,14 @@ class Author extends Model
                 $author->triDharmas()->detach();
             }
         });
+    }
+
+    public function toSearchableArray(): array
+    {
+        return [
+            'name' => $this->name,
+            'bio' => $this->bio,
+            'identifier' => $this->identifier,
+        ];
     }
 }

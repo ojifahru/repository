@@ -7,7 +7,7 @@ use App\Models\Author;
 use App\Support\Seo\Seo;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use Throwable;
 
 class AuthorIndexController extends Controller
 {
@@ -15,19 +15,12 @@ class AuthorIndexController extends Controller
     {
         $search = $request->string('q')->trim()->value();
 
-        $authors = Author::query()
+        $baseQuery = Author::query()
             ->whereNotNull('slug')
             ->whereHas('triDharmas', function ($query): void {
                 $query
                     ->where('status', 'published')
                     ->whereNull('tri_dharmas.deleted_at');
-            })
-            ->when(is_string($search) && $search !== '', function ($query) use ($search): void {
-                $query->where(function ($builder) use ($search): void {
-                    $builder
-                        ->where('name', 'like', "%{$search}%")
-                        ->orWhere('identifier', 'like', "%{$search}%");
-                });
             })
             ->withCount([
                 'triDharmas as published_documents_count' => function ($query): void {
@@ -35,17 +28,65 @@ class AuthorIndexController extends Controller
                         ->where('status', 'published')
                         ->whereNull('tri_dharmas.deleted_at');
                 },
-            ])
-            ->orderBy('name')
-            ->paginate(30)
-            ->withQueryString();
+            ]);
 
-        $canonical = route('public.authors.index');
-        $titleParts = ['Penulis'];
         if (is_string($search) && $search !== '') {
-            $titleParts[] = 'Cari: '.Str::limit($search, 30);
+            try {
+                // 🔥 SEARCH via Meilisearch (Scout)
+                $authors = Author::search($search)
+                    ->query(fn($query) => $query
+                        ->whereNotNull('slug')
+                        ->whereHas('triDharmas', function ($query): void {
+                            $query
+                                ->where('status', 'published')
+                                ->whereNull('tri_dharmas.deleted_at');
+                        })
+                        ->withCount([
+                            'triDharmas as published_documents_count' => function ($query): void {
+                                $query
+                                    ->where('status', 'published')
+                                    ->whereNull('tri_dharmas.deleted_at');
+                            },
+                        ]))
+                    ->paginate(30)
+                    ->withQueryString();
+
+                if ($authors->total() === 0) {
+                    $authors = (clone $baseQuery)
+                        ->where(function ($query) use ($search): void {
+                            $query
+                                ->where('name', 'like', "%{$search}%")
+                                ->orWhere('identifier', 'like', "%{$search}%");
+                        })
+                        ->orderBy('name')
+                        ->paginate(30)
+                        ->withQueryString();
+                }
+            } catch (Throwable) {
+                // 🔁 Fallback when Meilisearch isn't reachable
+                $authors = (clone $baseQuery)
+                    ->where(function ($query) use ($search): void {
+                        $query
+                            ->where('name', 'like', "%{$search}%")
+                            ->orWhere('identifier', 'like', "%{$search}%");
+                    })
+                    ->orderBy('name')
+                    ->paginate(30)
+                    ->withQueryString();
+            }
+        } else {
+            // 📚 REGULAR LISTING via Database
+            $authors = $baseQuery
+                ->orderBy('name')
+                ->paginate(30)
+                ->withQueryString();
         }
 
+        $canonical = route('public.authors.index');
+        $titleParts = ['Daftar Penulis'];
+        if (is_string($search) && $search !== '') {
+            $titleParts = ['Cari Penulis', $search];
+        }
         $title = Seo::title($titleParts);
         $description = Seo::description('Daftar penulis di repository institusi. Telusuri profil penulis dan publikasi terbit beserta PDF yang dapat diakses publik.');
 
