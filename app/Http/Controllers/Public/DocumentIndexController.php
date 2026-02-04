@@ -20,64 +20,111 @@ class DocumentIndexController extends Controller
     {
         $validated = $request->validated();
 
-        $query = TriDharma::query()
-            ->where('status', 'published')
-            ->with([
-                'authors' => function ($authorQuery) {
-                    $authorQuery->whereNull('authors.deleted_at');
-                },
-                'category',
-                'documentType',
-                'faculty',
-                'studyProgram',
-            ]);
-
         $search = $validated['q'] ?? null;
-        if (is_string($search) && $search !== '') {
-            $query->where(function ($builder) use ($search) {
-                $builder
-                    ->where('title', 'like', "%{$search}%")
-                    ->orWhere('abstract', 'like', "%{$search}%")
-                    ->orWhereHas('authors', function ($authorQuery) use ($search) {
-                        $authorQuery
-                            ->whereNull('authors.deleted_at')
-                            ->where('name', 'like', "%{$search}%");
-                    });
-            });
+        $search = is_string($search) ? trim($search) : null;
+
+        $filters = $validated;
+        if (is_string($search)) {
+            $filters['q'] = $search;
         }
 
-        if (isset($validated['author_id'])) {
-            $query->whereHas('authors', function ($authorQuery) use ($validated) {
-                $authorQuery
-                    ->whereNull('authors.deleted_at')
-                    ->where('authors.id', $validated['author_id']);
-            });
-        }
+        $relations = [
+            'authors' => function ($authorQuery) {
+                $authorQuery->whereNull('authors.deleted_at');
+            },
+            'category',
+            'documentType',
+            'faculty',
+            'studyProgram',
+        ];
 
-        if (isset($validated['faculty_id'])) {
-            $query->where('faculty_id', $validated['faculty_id']);
-        }
+        $useMeilisearch = is_string($search)
+            && $search !== ''
+            && config('scout.driver') === 'meilisearch';
 
-        if (isset($validated['study_program_id'])) {
-            $query->where('study_program_id', $validated['study_program_id']);
-        }
+        if ($useMeilisearch) {
+            $searchBuilder = TriDharma::search($search)
+                ->where('status', 'published');
 
-        if (isset($validated['document_type_id'])) {
-            $query->where('document_type_id', $validated['document_type_id']);
-        }
+            if (isset($filters['author_id'])) {
+                $searchBuilder->where('author_ids', (int) $filters['author_id']);
+            }
 
-        if (isset($validated['category_id'])) {
-            $query->where('category_id', $validated['category_id']);
-        }
+            if (isset($filters['faculty_id'])) {
+                $searchBuilder->where('faculty_id', (int) $filters['faculty_id']);
+            }
 
-        if (isset($validated['publish_year'])) {
-            $query->where('publish_year', $validated['publish_year']);
-        }
+            if (isset($filters['study_program_id'])) {
+                $searchBuilder->where('study_program_id', (int) $filters['study_program_id']);
+            }
 
-        $documents = $query
-            ->latest()
-            ->paginate(12)
-            ->withQueryString();
+            if (isset($filters['document_type_id'])) {
+                $searchBuilder->where('document_type_id', (int) $filters['document_type_id']);
+            }
+
+            if (isset($filters['category_id'])) {
+                $searchBuilder->where('category_id', (int) $filters['category_id']);
+            }
+
+            if (isset($filters['publish_year'])) {
+                $searchBuilder->where('publish_year', (int) $filters['publish_year']);
+            }
+
+            $documents = $searchBuilder
+                ->query(fn ($query) => $query->with($relations))
+                ->paginate(12)
+                ->withQueryString();
+        } else {
+            $query = TriDharma::query()
+                ->where('status', 'published')
+                ->with($relations);
+
+            if (is_string($search) && $search !== '') {
+                $query->where(function ($builder) use ($search) {
+                    $builder
+                        ->where('title', 'like', "%{$search}%")
+                        ->orWhere('abstract', 'like', "%{$search}%")
+                        ->orWhereHas('authors', function ($authorQuery) use ($search) {
+                            $authorQuery
+                                ->whereNull('authors.deleted_at')
+                                ->where('name', 'like', "%{$search}%");
+                        });
+                });
+            }
+
+            if (isset($filters['author_id'])) {
+                $query->whereHas('authors', function ($authorQuery) use ($filters) {
+                    $authorQuery
+                        ->whereNull('authors.deleted_at')
+                        ->where('authors.id', $filters['author_id']);
+                });
+            }
+
+            if (isset($filters['faculty_id'])) {
+                $query->where('faculty_id', $filters['faculty_id']);
+            }
+
+            if (isset($filters['study_program_id'])) {
+                $query->where('study_program_id', $filters['study_program_id']);
+            }
+
+            if (isset($filters['document_type_id'])) {
+                $query->where('document_type_id', $filters['document_type_id']);
+            }
+
+            if (isset($filters['category_id'])) {
+                $query->where('category_id', $filters['category_id']);
+            }
+
+            if (isset($filters['publish_year'])) {
+                $query->where('publish_year', $filters['publish_year']);
+            }
+
+            $documents = $query
+                ->latest()
+                ->paginate(12)
+                ->withQueryString();
+        }
 
         $filterOptions = [
             'authors' => Author::query()->orderBy('name')->get(['id', 'name']),
@@ -93,16 +140,16 @@ class DocumentIndexController extends Controller
                 ->pluck('publish_year'),
         ];
 
-        $hasFilters = collect($validated)
+        $hasFilters = collect($filters)
             ->filter(fn ($value) => $value !== null && $value !== '' && $value !== [])
             ->isNotEmpty();
 
         $titleParts = ['Dokumen Repository'];
-        if (! empty($validated['publish_year'])) {
-            $titleParts[] = (string) $validated['publish_year'];
+        if (! empty($filters['publish_year'])) {
+            $titleParts[] = (string) $filters['publish_year'];
         }
-        if (! empty($validated['q'])) {
-            $titleParts[] = 'Pencarian: '.Str::limit((string) $validated['q'], 30);
+        if (! empty($filters['q'])) {
+            $titleParts[] = 'Pencarian: '.Str::limit((string) $filters['q'], 30);
         }
 
         $title = Seo::title($titleParts);
@@ -111,7 +158,7 @@ class DocumentIndexController extends Controller
 
         return view('public.documents.index', [
             'documents' => $documents,
-            'filters' => $validated,
+            'filters' => $filters,
             'filterOptions' => $filterOptions,
             'seo' => [
                 'title' => $title,

@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use Laravel\Scout\Searchable;
 
 class TriDharma extends Model
 {
     use SoftDeletes;
+    use Searchable;
 
     public function getRouteKeyName(): string
     {
@@ -64,6 +66,71 @@ class TriDharma extends Model
         'download_count' => 'integer',
         'deleted_at' => 'datetime',
     ];
+
+    public function searchableAs(): string
+    {
+        return 'tri_dharmas';
+    }
+
+    public function shouldBeSearchable(): bool
+    {
+        return $this->status === 'published' && $this->deleted_at === null;
+    }
+
+    public function makeAllSearchableUsing($query)
+    {
+        return $query->with([
+            'authors:id,name,deleted_at',
+            'category:id,name',
+            'documentType:id,name',
+            'faculty:id,name',
+            'studyProgram:id,name',
+        ]);
+    }
+
+    public function toSearchableArray(): array
+    {
+        $this->loadMissing([
+            'authors:id,name,deleted_at',
+            'category:id,name',
+            'documentType:id,name',
+            'faculty:id,name',
+            'studyProgram:id,name',
+        ]);
+
+        $activeAuthors = $this->authors
+            ->filter(fn ($author) => $author->deleted_at === null)
+            ->values();
+
+        $normalizedTitle = $this->normalizeText((string) $this->title);
+        $normalizedAbstract = $this->normalizeText((string) $this->abstract);
+
+        return [
+            'id' => $this->id,
+            'title' => $normalizedTitle,
+            'abstract' => $normalizedAbstract,
+            'authors' => $activeAuthors->pluck('name')->all(),
+            'author_ids' => $activeAuthors->pluck('id')->all(),
+            'category' => $this->category?->name,
+            'category_id' => $this->category_id,
+            'document_type' => $this->documentType?->name,
+            'document_type_id' => $this->document_type_id,
+            'faculty' => $this->faculty?->name,
+            'faculty_id' => $this->faculty_id,
+            'study_program' => $this->studyProgram?->name,
+            'study_program_id' => $this->study_program_id,
+            'publish_year' => $this->publish_year,
+            'status' => $this->status,
+        ];
+    }
+
+    protected function normalizeText(string $value): string
+    {
+        $normalized = preg_replace('/[\r\n]+/', ' ', $value);
+        $normalized = preg_replace('/\s+/', ' ', $normalized ?? '');
+
+        return trim($normalized ?? '');
+    }
 
     public function authors()
     {

@@ -54,14 +54,16 @@
                     class="group rounded-2xl bg-white/80 p-6 shadow-sm ring-1 ring-gray-900/5 transition hover:-translate-y-0.5 hover:bg-white hover:shadow-md hover:ring-indigo-500/15 focus:outline-none focus:ring-4 focus:ring-indigo-500/15">
                     <div class="flex items-start justify-between gap-4">
                         <div class="min-w-0">
-                            <div class="text-base font-semibold leading-snug text-gray-900 group-hover:underline">
+                            <div
+                                class="line-clamp-2 text-base font-semibold leading-snug text-gray-900 group-hover:underline">
                                 {{ $doc->title ?? 'Untitled' }}
                             </div>
-                            <div class="mt-1 text-sm text-gray-600">
+                            <div class="mt-1 line-clamp-1 text-sm text-gray-600">
                                 {{ $doc->authors->pluck('name')->implode(', ') ?: '-' }}
                             </div>
                             @if ($doc->studyProgram)
-                                <div class="mt-2 text-xs text-gray-500">{{ $doc->studyProgram->name }}</div>
+                                <div class="mt-2 line-clamp-1 text-xs text-gray-500">{{ $doc->studyProgram->name }}
+                                </div>
                             @endif
                         </div>
                         <x-ui.badge variant="primary" class="border-indigo-200 bg-indigo-50 text-indigo-800">
@@ -73,7 +75,7 @@
                         $abstractPreview = trim(strip_tags((string) $doc->abstract));
                     @endphp
                     @if ($abstractPreview !== '')
-                        <p class="mt-4 text-sm leading-relaxed text-gray-700">
+                        <p class="mt-4 line-clamp-3 text-sm leading-relaxed text-gray-700">
                             {{ \Illuminate\Support\Str::limit($abstractPreview, 180) }}
                         </p>
                     @endif

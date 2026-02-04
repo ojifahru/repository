@@ -58,8 +58,9 @@
     </section>
 
     <section class="mt-10">
-        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <x-ui.card class="border-0 bg-white/80 p-6 shadow-sm hover:shadow-md">
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <a href="{{ route('public.documents.index') }}"
+                class="group rounded-2xl bg-white/80 p-6 shadow-sm transition hover:-translate-y-0.5 hover:bg-white hover:shadow-md hover:ring-1 hover:ring-indigo-500/15 focus:outline-none focus:ring-4 focus:ring-indigo-500/15">
                 <div class="flex items-start gap-3">
                     <span class="flex size-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700">
                         <svg viewBox="0 0 20 20" fill="currentColor" class="size-5" aria-hidden="true">
@@ -74,9 +75,10 @@
                         <div class="mt-1 text-xs text-gray-500">Terpublikasi</div>
                     </div>
                 </div>
-            </x-ui.card>
+            </a>
 
-            <x-ui.card class="border-0 bg-white/80 p-6 shadow-sm hover:shadow-md">
+            <a href="{{ route('public.authors.index') }}"
+                class="group rounded-2xl bg-white/80 p-6 shadow-sm transition hover:-translate-y-0.5 hover:bg-white hover:shadow-md hover:ring-1 hover:ring-indigo-500/15 focus:outline-none focus:ring-4 focus:ring-indigo-500/15">
                 <div class="flex items-start gap-3">
                     <span class="flex size-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700">
                         <svg viewBox="0 0 20 20" fill="currentColor" class="size-5" aria-hidden="true">
@@ -90,9 +92,10 @@
                         <div class="mt-1 text-xs text-gray-500">Terdaftar</div>
                     </div>
                 </div>
-            </x-ui.card>
+            </a>
 
-            <x-ui.card class="border-0 bg-white/80 p-6 shadow-sm hover:shadow-md">
+            <a href="{{ route('public.faculties.index') }}"
+                class="group rounded-2xl bg-white/80 p-6 shadow-sm transition hover:-translate-y-0.5 hover:bg-white hover:shadow-md hover:ring-1 hover:ring-indigo-500/15 focus:outline-none focus:ring-4 focus:ring-indigo-500/15">
                 <div class="flex items-start gap-3">
                     <span class="flex size-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700">
                         <svg viewBox="0 0 20 20" fill="currentColor" class="size-5" aria-hidden="true">
@@ -106,10 +109,29 @@
                         <div class="mt-1 text-xs text-gray-500">Aktif</div>
                     </div>
                 </div>
-            </x-ui.card>
+            </a>
+
+            <a href="{{ route('public.study-programs.index') }}"
+                class="group rounded-2xl bg-white/80 p-6 shadow-sm transition hover:-translate-y-0.5 hover:bg-white hover:shadow-md hover:ring-1 hover:ring-indigo-500/15 focus:outline-none focus:ring-4 focus:ring-indigo-500/15">
+                <div class="flex items-start gap-3">
+                    <span class="flex size-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700">
+                        <svg viewBox="0 0 20 20" fill="currentColor" class="size-5" aria-hidden="true">
+                            <path d="M3 8.5 10 4l7 4.5v8A1.5 1.5 0 0 1 15.5 18h-11A1.5 1.5 0 0 1 3 16.5v-8Z" />
+                        </svg>
+                    </span>
+                    <div>
+                        <div class="text-xs font-medium uppercase tracking-wide text-gray-500">Program Studi</div>
+                        <div class="mt-1 text-3xl font-semibold tabular-nums text-gray-900">
+                            {{ $stats['study_programs'] }}
+                        </div>
+                        <div class="mt-1 text-xs text-gray-500">Aktif</div>
+                    </div>
+                </div>
+            </a>
 
             @if (isset($stats['downloads']))
-                <x-ui.card class="border-0 bg-white/80 p-6 shadow-sm hover:shadow-md">
+                <a href="{{ route('public.documents.index') }}"
+                    class="group rounded-2xl bg-white/80 p-6 shadow-sm transition hover:-translate-y-0.5 hover:bg-white hover:shadow-md hover:ring-1 hover:ring-indigo-500/15 focus:outline-none focus:ring-4 focus:ring-indigo-500/15">
                     <div class="flex items-start gap-3">
                         <span class="flex size-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700">
                             <svg viewBox="0 0 20 20" fill="currentColor" class="size-5" aria-hidden="true">
@@ -126,7 +148,7 @@
                             <div class="mt-1 text-xs text-gray-500">Total</div>
                         </div>
                     </div>
-                </x-ui.card>
+                </a>
             @endif
         </div>
     </section>
@@ -143,32 +165,43 @@
             </a>
         </div>
 
-        <div class="mt-6 grid gap-4 md:grid-cols-2">
+        <div class="mt-6 grid gap-4">
             @forelse($latestDocuments->take(6) as $doc)
                 <a href="{{ route('public.repository.show', $doc) }}"
-                    class="group rounded-2xl bg-white/80 p-6 shadow-sm ring-1 ring-gray-900/5 transition hover:-translate-y-0.5 hover:bg-white hover:shadow-md hover:ring-indigo-500/15 focus:outline-none focus:ring-4 focus:ring-indigo-500/15">
-                    <div class="flex items-start justify-between gap-4">
-                        <div class="min-w-0">
-                            <div class="text-base font-semibold leading-snug text-gray-900 group-hover:underline">
-                                {{ $doc->title ?? 'Untitled' }}
-                            </div>
-                            <div class="mt-1 text-sm text-gray-600">
-                                {{ $doc->authors->pluck('name')->implode(', ') ?: '-' }}
-                            </div>
+                    class="group flex items-center gap-4 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-900/5 transition hover:-translate-y-0.5 hover:bg-gray-50 hover:shadow-md hover:ring-indigo-500/15 focus:outline-none focus:ring-4 focus:ring-indigo-500/15">
+                    <!-- Document Icon -->
+                    <div class="flex-shrink-0">
+                        <div class="flex size-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                            <svg viewBox="0 0 20 20" fill="currentColor" class="size-6" aria-hidden="true">
+                                <path
+                                    d="M4 3.5A2.5 2.5 0 0 1 6.5 1H15a2 2 0 0 1 2 2v11.5A2.5 2.5 0 0 1 14.5 17H6.5A2.5 2.5 0 0 1 4 14.5V3.5Z" />
+                            </svg>
                         </div>
+                    </div>
 
+                    <!-- Document Content -->
+                    <div class="min-w-0 flex-1">
+                        <div class="text-base font-semibold leading-snug text-gray-900 group-hover:underline">
+                            {{ $doc->title ?? 'Untitled' }}
+                        </div>
+                        <div class="mt-1 text-sm text-gray-600">
+                            {{ $doc->authors->pluck('name')->implode(', ') ?: '-' }}
+                        </div>
+                        <div class="mt-2 flex flex-wrap items-center gap-2">
+                            @if ($doc->category?->name)
+                                <x-ui.badge class="border-0 bg-gray-100 text-gray-700 text-xs">
+                                    {{ $doc->category?->name ?? '' }}
+                                </x-ui.badge>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Year & Detail -->
+                    <div class="flex flex-shrink-0 flex-col items-end gap-2">
                         <x-ui.badge variant="primary" class="border-indigo-200 bg-indigo-50 text-indigo-800">
                             {{ $doc->publish_year ?? '-' }}
                         </x-ui.badge>
-                    </div>
-
-                    <div class="mt-4 flex flex-wrap items-center gap-2">
-                        @if ($doc->category?->name)
-                            <x-ui.badge class="border-0 bg-gray-100 text-gray-700">
-                                {{ $doc->category?->name ?? '' }}
-                            </x-ui.badge>
-                        @endif
-                        <span class="ml-auto inline-flex items-center gap-1 text-sm font-semibold text-indigo-700">
+                        <span class="inline-flex items-center gap-1 text-sm font-semibold text-indigo-700">
                             Detail
                             <svg viewBox="0 0 20 20" fill="currentColor" class="size-4" aria-hidden="true">
                                 <path fill-rule="evenodd"
@@ -179,7 +212,7 @@
                     </div>
                 </a>
             @empty
-                <div class="rounded-2xl bg-white/80 p-8 text-sm text-gray-600 shadow-sm ring-1 ring-gray-900/5">
+                <div class="rounded-2xl bg-white p-8 text-sm text-gray-600 shadow-sm ring-1 ring-gray-900/5">
                     Belum ada dokumen yang dipublikasikan.
                 </div>
             @endforelse

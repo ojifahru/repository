@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Author;
 use App\Models\Faculty;
 use App\Models\TriDharma;
+use App\Models\StudyProgram;
 use App\Support\Seo\Seo;
 use Illuminate\Contracts\View\View;
 
@@ -20,6 +21,7 @@ class HomeController extends Controller
             'documents' => (clone $publishedDocumentsQuery)->count(),
             'authors' => Author::query()->count(),
             'faculties' => Faculty::query()->count(),
+            'study_programs' => StudyProgram::query()->count(),
         ];
 
         $latestDocuments = (clone $publishedDocumentsQuery)

@@ -17,24 +17,51 @@
 
                         <div class="mt-3 flex flex-wrap items-center gap-2 text-sm text-gray-600">
                             <span class="font-medium text-gray-700">Author:</span>
-                            <span
-                                class="min-w-0 break-words">{{ $document->authors->pluck('name')->implode(', ') ?: '-' }}</span>
+                            <span class="min-w-0 break-words">
+                                @forelse ($document->authors as $author)
+                                    <a class="rounded-lg font-medium text-indigo-700 hover:underline focus:outline-none focus:ring-4 focus:ring-indigo-500/15"
+                                        href="{{ route('public.documents.index', ['author_id' => $author->id]) }}">
+                                        {{ $author->name }}
+                                    </a>
+                                    @if (!$loop->last)
+                                        ,
+                                    @endif
+                                @empty
+                                    -
+                                @endforelse
+                            </span>
                         </div>
 
                         <div class="mt-4 flex flex-wrap gap-2">
                             @if ($document->category)
-                                <x-ui.badge class="border-0 bg-white/70 text-gray-700">
-                                    {{ $document->category->name }}
-                                </x-ui.badge>
+                                <a class="focus:outline-none"
+                                    href="{{ route('public.documents.index', ['category_id' => $document->category->id]) }}">
+                                    <x-ui.badge class="border-0 bg-white/70 text-gray-700 hover:bg-white">
+                                        {{ $document->category->name }}
+                                    </x-ui.badge>
+                                </a>
                             @endif
                             @if ($document->documentType)
-                                <x-ui.badge class="border-0 bg-white/70 text-gray-700">
-                                    {{ $document->documentType->name }}
+                                <a class="focus:outline-none"
+                                    href="{{ route('public.documents.index', ['document_type_id' => $document->documentType->id]) }}">
+                                    <x-ui.badge class="border-0 bg-white/70 text-gray-700 hover:bg-white">
+                                        {{ $document->documentType->name }}
+                                    </x-ui.badge>
+                                </a>
+                            @endif
+                            @if ($document->publish_year)
+                                <a class="focus:outline-none"
+                                    href="{{ route('public.documents.index', ['publish_year' => $document->publish_year]) }}">
+                                    <x-ui.badge variant="primary"
+                                        class="border-indigo-200 bg-indigo-50 text-indigo-800 hover:bg-indigo-100">
+                                        Tahun {{ $document->publish_year }}
+                                    </x-ui.badge>
+                                </a>
+                            @else
+                                <x-ui.badge variant="primary" class="border-indigo-200 bg-indigo-50 text-indigo-800">
+                                    Tahun -
                                 </x-ui.badge>
                             @endif
-                            <x-ui.badge variant="primary" class="border-indigo-200 bg-indigo-50 text-indigo-800">
-                                Tahun {{ $document->publish_year ?? '-' }}
-                            </x-ui.badge>
                         </div>
                     </div>
 
