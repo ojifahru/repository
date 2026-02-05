@@ -9,7 +9,9 @@
         <dc:subject>{{ $subject }}</dc:subject>
     @endforeach
     @if (!empty($dc['description']))
-        <dc:description>{{ $dc['description'] }}</dc:description>
+        <dc:description>
+            {{ trim(preg_replace('/\s+/', ' ', strip_tags($dc['description']))) }}
+        </dc:description>
     @endif
     <dc:publisher>{{ $dc['publisher'] }}</dc:publisher>
     @if (!empty($dc['date']))
