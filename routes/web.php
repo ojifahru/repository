@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\OaiPmhController;
 use App\Http\Controllers\Public\AuthorIndexController;
 use App\Http\Controllers\Public\AuthorShowController;
 use App\Http\Controllers\Public\CategoryIndexController;
@@ -21,6 +22,10 @@ use App\Http\Controllers\SitemapController;
 use App\Models\Author;
 use App\Models\TriDharma;
 use Illuminate\Support\Facades\Route;
+
+Route::match(['GET', 'POST'], '/oai', OaiPmhController::class)
+    ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class])
+    ->name('oai');
 
 Route::get('/', HomeController::class)->name('public.home');
 
