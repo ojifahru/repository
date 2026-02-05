@@ -4,26 +4,32 @@ namespace App\Filament\Resources\Users;
 
 use App\Filament\Resources\Users\Pages\CreateUser;
 use App\Filament\Resources\Users\Pages\EditUser;
+use App\Filament\Resources\Users\Pages\ListUserActivities;
 use App\Filament\Resources\Users\Pages\ListUsers;
 use App\Filament\Resources\Users\Schemas\UserForm;
 use App\Filament\Resources\Users\Tables\UsersTable;
 use App\Models\User;
 use BackedEnum;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
-    protected static string | UnitEnum | null $navigationGroup = 'Manajemen Pengguna';
+
+    protected static string|UnitEnum|null $navigationGroup = 'Manajemen Pengguna';
+
     protected static ?string $navigationLabel = 'Users';
+
     protected static ?int $navigationSort = 45;
+
     protected static ?string $modelLabel = 'User';
+
     protected static ?string $pluralModelLabel = 'Users';
 
     public static function form(Schema $schema): Schema
@@ -49,6 +55,7 @@ class UserResource extends Resource
             'index' => ListUsers::route('/'),
             'create' => CreateUser::route('/create'),
             'edit' => EditUser::route('/{record}/edit'),
+            'activities' => ListUserActivities::route('/{record}/activities'),
         ];
     }
 
@@ -57,6 +64,7 @@ class UserResource extends Resource
         if (auth()->user()->can('ViewAny:User')) {
             return true;
         }
+
         return false;
     }
 }

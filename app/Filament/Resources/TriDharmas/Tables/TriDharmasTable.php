@@ -34,7 +34,7 @@ class TriDharmasTable
                     ->listWithLineBreaks()
                     ->limitList(3)
                     ->searchable()
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('documentType.name')
                     ->label('Jenis Dokumen')
@@ -42,11 +42,11 @@ class TriDharmasTable
 
                 TextColumn::make('faculty.name')
                     ->label('Fakultas')
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('studyProgram.name')
                     ->label('Program Studi')
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('publish_year')
                     ->label('Tahun')

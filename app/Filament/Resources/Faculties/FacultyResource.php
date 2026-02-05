@@ -5,24 +5,31 @@ namespace App\Filament\Resources\Faculties;
 use App\Filament\Resources\Faculties\Pages\CreateFaculty;
 use App\Filament\Resources\Faculties\Pages\EditFaculty;
 use App\Filament\Resources\Faculties\Pages\ListFaculties;
+use App\Filament\Resources\Faculties\Pages\ListFacultyActivities;
 use App\Filament\Resources\Faculties\Schemas\FacultyForm;
 use App\Filament\Resources\Faculties\Tables\FacultiesTable;
 use App\Models\Faculty;
 use BackedEnum;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class FacultyResource extends Resource
 {
     protected static ?string $model = Faculty::class;
-    protected static string | UnitEnum | null $navigationGroup = 'Struktur Akademik';
+
+    protected static string|UnitEnum|null $navigationGroup = 'Struktur Akademik';
+
     protected static ?string $navigationLabel = 'Fakultas';
+
     protected static ?string $modelLabel = 'Fakultas';
+
     protected static ?string $pluralModelLabel = 'Fakultas';
+
     protected static ?int $navigationSort = 15;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::BuildingLibrary;
 
     public static function form(Schema $schema): Schema
@@ -48,6 +55,7 @@ class FacultyResource extends Resource
             'index' => ListFaculties::route('/'),
             'create' => CreateFaculty::route('/create'),
             'edit' => EditFaculty::route('/{record}/edit'),
+            'activities' => ListFacultyActivities::route('/{record}/activities'),
         ];
     }
 }

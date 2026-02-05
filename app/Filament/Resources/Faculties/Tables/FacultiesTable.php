@@ -2,14 +2,10 @@
 
 namespace App\Filament\Resources\Faculties\Tables;
 
-use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteAction;
-use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreAction;
-use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -43,31 +39,27 @@ class FacultiesTable
                 EditAction::make()
                     ->label('ubah')
                     ->visible(
-                        fn($record) =>
-                        auth()->user()->can('Update:Faculty')
+                        fn ($record) => auth()->user()->can('Update:Faculty')
                     ),
 
                 DeleteAction::make()
                     ->label('arsipkan')
                     ->visible(
-                        fn($record) =>
-                        is_null($record->deleted_at)
+                        fn ($record) => is_null($record->deleted_at)
                             && auth()->user()->can('Delete:Faculty')
                     ),
 
                 RestoreAction::make()
                     ->label('Pulihkan')
                     ->visible(
-                        fn($record) =>
-                        !is_null($record->deleted_at)
+                        fn ($record) => ! is_null($record->deleted_at)
                             && auth()->user()->can('Restore:Faculty')
                     ),
 
                 ForceDeleteAction::make()
                     ->label('Hapus Permanen')
                     ->visible(
-                        fn($record) =>
-                        !is_null($record->deleted_at)
+                        fn ($record) => ! is_null($record->deleted_at)
                             && auth()->user()->can('ForceDelete:Faculty')
                     ),
             ])

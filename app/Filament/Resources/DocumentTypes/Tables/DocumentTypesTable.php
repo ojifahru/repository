@@ -2,9 +2,7 @@
 
 namespace App\Filament\Resources\DocumentTypes\Tables;
 
-use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -32,11 +30,10 @@ class DocumentTypesTable
             ->recordActions([
                 EditAction::make(),
                 DeleteAction::make()
-                    ->disabled(fn($record) => $record->triDharmas()->exists())
+                    ->disabled(fn ($record) => $record->triDharmas()->exists())
                     ->tooltip('Jenis dokumen masih digunakan')
                     ->visible(
-                        fn($record) =>
-                        auth()->user()->can('Delete:DocumentType')
+                        fn ($record) => auth()->user()->can('Delete:DocumentType')
                     ),
             ])
 

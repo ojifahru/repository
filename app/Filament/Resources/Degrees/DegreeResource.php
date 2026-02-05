@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Degrees;
 
 use App\Filament\Resources\Degrees\Pages\CreateDegree;
 use App\Filament\Resources\Degrees\Pages\EditDegree;
+use App\Filament\Resources\Degrees\Pages\ListDegreeActivities;
 use App\Filament\Resources\Degrees\Pages\ListDegrees;
 use App\Filament\Resources\Degrees\Schemas\DegreeForm;
 use App\Filament\Resources\Degrees\Tables\DegreesTable;
@@ -54,6 +55,7 @@ class DegreeResource extends Resource
             'index' => ListDegrees::route('/'),
             'create' => CreateDegree::route('/create'),
             'edit' => EditDegree::route('/{record}/edit'),
+            'activities' => ListDegreeActivities::route('/{record}/activities'),
         ];
     }
 }

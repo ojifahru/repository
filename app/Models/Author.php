@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Author extends Model
 {
-    use Searchable, SoftDeletes;
+    use LogsActivity, Searchable, SoftDeletes;
 
     protected $table = 'authors';
 
@@ -75,5 +77,16 @@ class Author extends Model
             'bio' => $this->bio,
             'identifier' => $this->identifier,
         ];
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->useLogName('author')
+            ->setDescriptionForEvent(fn (string $eventName) => "Author has been {$eventName}")
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+        // Chain fluent methods for configuration options
     }
 }

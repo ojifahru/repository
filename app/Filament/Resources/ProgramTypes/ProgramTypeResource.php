@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ProgramTypes;
 
 use App\Filament\Resources\ProgramTypes\Pages\CreateProgramType;
 use App\Filament\Resources\ProgramTypes\Pages\EditProgramType;
+use App\Filament\Resources\ProgramTypes\Pages\ListProgramTypeActivities;
 use App\Filament\Resources\ProgramTypes\Pages\ListProgramTypes;
 use App\Filament\Resources\ProgramTypes\Schemas\ProgramTypeForm;
 use App\Filament\Resources\ProgramTypes\Tables\ProgramTypesTable;
@@ -54,6 +55,7 @@ class ProgramTypeResource extends Resource
             'index' => ListProgramTypes::route('/'),
             'create' => CreateProgramType::route('/create'),
             'edit' => EditProgramType::route('/{record}/edit'),
+            'activities' => ListProgramTypeActivities::route('/{record}/activities'),
         ];
     }
 }

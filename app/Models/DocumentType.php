@@ -4,9 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class DocumentType extends Model
 {
+    use LogsActivity;
+
     protected $table = 'document_types';
 
     public function getRouteKeyName(): string
@@ -31,5 +35,14 @@ class DocumentType extends Model
                 throw new \Exception('Jenis dokumen masih digunakan.');
             }
         });
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('document_type')
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 }

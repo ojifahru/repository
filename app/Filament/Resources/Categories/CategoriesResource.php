@@ -5,24 +5,31 @@ namespace App\Filament\Resources\Categories;
 use App\Filament\Resources\Categories\Pages\CreateCategories;
 use App\Filament\Resources\Categories\Pages\EditCategories;
 use App\Filament\Resources\Categories\Pages\ListCategories;
+use App\Filament\Resources\Categories\Pages\ListCategoriesActivities;
 use App\Filament\Resources\Categories\Schemas\CategoriesForm;
 use App\Filament\Resources\Categories\Tables\CategoriesTable;
 use App\Models\Categories;
 use BackedEnum;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class CategoriesResource extends Resource
 {
     protected static ?string $model = Categories::class;
-    protected static string | UnitEnum | null $navigationGroup = 'Metadata';
+
+    protected static string|UnitEnum|null $navigationGroup = 'Metadata';
+
     protected static ?string $navigationLabel = 'Kategori';
+
     protected static ?int $navigationSort = 25;
+
     protected static ?string $modelLabel = 'Kategori';
+
     protected static ?string $pluralModelLabel = 'Kategori';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Tag;
 
     public static function form(Schema $schema): Schema
@@ -48,6 +55,7 @@ class CategoriesResource extends Resource
             'index' => ListCategories::route('/'),
             'create' => CreateCategories::route('/create'),
             'edit' => EditCategories::route('/{record}/edit'),
+            'activities' => ListCategoriesActivities::route('/{record}/activities'),
         ];
     }
 

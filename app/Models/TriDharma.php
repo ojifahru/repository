@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class TriDharma extends Model
 {
-    use SoftDeletes;
+    use LogsActivity, SoftDeletes;
     use Searchable;
 
     public function getRouteKeyName(): string
@@ -155,5 +157,14 @@ class TriDharma extends Model
     public function category()
     {
         return $this->belongsTo(Categories::class, 'category_id')->withTrashed();
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('tri_dharma')
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 }
