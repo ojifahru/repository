@@ -19,7 +19,7 @@ class AuthActivitySubscriber
             'remember' => $event->remember,
             'ip_address' => $this->getIpAddress(),
             'user_agent' => $this->getUserAgent(),
-        ], fn ($value) => filled($value) || $value === false);
+        ], fn($value) => filled($value) || $value === false);
 
         if ($this->isDuplicate('login', [
             'guard' => $event->guard,
@@ -44,7 +44,7 @@ class AuthActivitySubscriber
             'guard' => $event->guard,
             'ip_address' => $this->getIpAddress(),
             'user_agent' => $this->getUserAgent(),
-        ], fn ($value) => filled($value));
+        ], fn($value) => filled($value));
 
         if ($this->isDuplicate('logout', [
             'guard' => $event->guard,
@@ -72,7 +72,7 @@ class AuthActivitySubscriber
             'credentials' => $credentials,
             'ip_address' => $this->getIpAddress(),
             'user_agent' => $this->getUserAgent(),
-        ], fn ($value) => filled($value));
+        ], fn($value) => filled($value));
 
         if ($this->isDuplicate('failed', [
             'guard' => $event->guard,
@@ -137,7 +137,7 @@ class AuthActivitySubscriber
             'context' => $context,
         ], JSON_THROW_ON_ERROR));
 
-        $cacheKey = 'activitylog:auth-dedup:'.$fingerprint;
+        $cacheKey = 'activitylog:auth-dedup:' . $fingerprint;
 
         try {
             return ! Cache::add($cacheKey, true, now()->addSeconds(3));

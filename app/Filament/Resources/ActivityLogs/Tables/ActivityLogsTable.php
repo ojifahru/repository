@@ -53,14 +53,14 @@ class ActivityLogsTable
                     ->label('Waktu')
                     ->since()
                     ->color('gray')
-                    ->tooltip(fn (Activity $record): ?string => $record->created_at?->format('d M Y H:i:s'))
+                    ->tooltip(fn(Activity $record): ?string => $record->created_at?->format('d M Y H:i:s'))
                     ->sortable(),
 
                 TextColumn::make('event')
                     ->label('Event')
                     ->badge()
-                    ->formatStateUsing(fn (?string $state): string => self::EVENT_LABELS[$state] ?? (string) Str::headline((string) $state))
-                    ->color(fn (?string $state): string => match ($state) {
+                    ->formatStateUsing(fn(?string $state): string => self::EVENT_LABELS[$state] ?? (string) Str::headline((string) $state))
+                    ->color(fn(?string $state): string => match ($state) {
                         'created' => 'success',
                         'updated' => 'warning',
                         'deleted' => 'danger',
@@ -76,7 +76,7 @@ class ActivityLogsTable
                     ->label('Deskripsi')
                     ->wrap()
                     ->limit(70)
-                    ->tooltip(fn (Activity $record): ?string => filled($record->description) ? (string) $record->description : null)
+                    ->tooltip(fn(Activity $record): ?string => filled($record->description) ? (string) $record->description : null)
                     ->searchable(),
 
                 TextColumn::make('log_name')
@@ -86,21 +86,21 @@ class ActivityLogsTable
 
                 TextColumn::make('subject')
                     ->label('Target')
-                    ->getStateUsing(fn (Activity $record): string => self::formatSubjectLabel($record))
-                    ->tooltip(fn (Activity $record): ?string => self::formatSubjectTooltip($record))
-                    ->url(fn (Activity $record): ?string => self::getSubjectUrl($record))
+                    ->getStateUsing(fn(Activity $record): string => self::formatSubjectLabel($record))
+                    ->tooltip(fn(Activity $record): ?string => self::formatSubjectTooltip($record))
+                    ->url(fn(Activity $record): ?string => self::getSubjectUrl($record))
                     ->openUrlInNewTab()
                     ->toggleable(),
 
                 TextColumn::make('causer')
                     ->label('User')
-                    ->getStateUsing(fn (Activity $record): string => self::formatCauserLabel($record))
-                    ->description(fn (Activity $record): ?string => self::formatCauserDescription($record))
+                    ->getStateUsing(fn(Activity $record): string => self::formatCauserLabel($record))
+                    ->description(fn(Activity $record): ?string => self::formatCauserDescription($record))
                     ->searchable(query: function (Builder $query, string $search): Builder {
                         return $query->whereHasMorph(
                             'causer',
                             ['*'],
-                            fn (Builder $morphQuery) => $morphQuery->where('name', 'like', "%{$search}%")
+                            fn(Builder $morphQuery) => $morphQuery->where('name', 'like', "%{$search}%")
                         );
                     })
                     ->toggleable(),
@@ -120,7 +120,7 @@ class ActivityLogsTable
 
                 SelectFilter::make('log_name')
                     ->label('Log')
-                    ->options(fn (): array => Activity::query()
+                    ->options(fn(): array => Activity::query()
                         ->select('log_name')
                         ->distinct()
                         ->orderBy('log_name')
@@ -131,14 +131,14 @@ class ActivityLogsTable
                 SelectFilter::make('causer_id')
                     ->label('User')
                     ->searchable()
-                    ->options(fn (): array => User::query()->orderBy('name')->pluck('name', 'id')->all())
+                    ->options(fn(): array => User::query()->orderBy('name')->pluck('name', 'id')->all())
                     ->query(function (Builder $query, array $data): Builder {
                         $value = Arr::get($data, 'value');
 
                         return $query
                             ->when(
                                 filled($value),
-                                fn (Builder $query): Builder => $query
+                                fn(Builder $query): Builder => $query
                                     ->where('causer_type', User::class)
                                     ->where('causer_id', $value)
                             );
@@ -157,11 +157,11 @@ class ActivityLogsTable
                         return $query
                             ->when(
                                 filled($from),
-                                fn (Builder $query): Builder => $query->where('created_at', '>=', Carbon::parse($from)->startOfDay())
+                                fn(Builder $query): Builder => $query->where('created_at', '>=', Carbon::parse($from)->startOfDay())
                             )
                             ->when(
                                 filled($until),
-                                fn (Builder $query): Builder => $query->where('created_at', '<=', Carbon::parse($until)->endOfDay())
+                                fn(Builder $query): Builder => $query->where('created_at', '<=', Carbon::parse($until)->endOfDay())
                             );
                     }),
             ])
@@ -171,8 +171,8 @@ class ActivityLogsTable
                     ->icon('heroicon-o-clock')
                     ->tooltip('Lihat aktivitas record')
                     ->iconButton()
-                    ->url(fn (Activity $record): ?string => self::getSubjectActivitiesUrl($record))
-                    ->visible(fn (Activity $record): bool => filled(self::getSubjectActivitiesUrl($record))),
+                    ->url(fn(Activity $record): ?string => self::getSubjectActivitiesUrl($record))
+                    ->visible(fn(Activity $record): bool => filled(self::getSubjectActivitiesUrl($record))),
             ])
             ->toolbarActions([])
             ->defaultSort('created_at', 'desc');
@@ -190,8 +190,8 @@ class ActivityLogsTable
         $display = self::guessModelDisplayValue($record->subject);
 
         return filled($display)
-            ? $type.' • '.$display
-            : $type.' #'.$id;
+            ? $type . ' • ' . $display
+            : $type . ' #' . $id;
     }
 
     private static function formatSubjectTooltip(Activity $record): ?string
@@ -205,8 +205,8 @@ class ActivityLogsTable
         $display = self::guessModelDisplayValue($record->subject);
 
         return filled($display)
-            ? $type.' #'.$id.' — '.$display
-            : $type.' #'.$id;
+            ? $type . ' #' . $id . ' — ' . $display
+            : $type . ' #' . $id;
     }
 
     private static function formatCauserLabel(Activity $record): string
@@ -219,7 +219,7 @@ class ActivityLogsTable
 
         return filled($name)
             ? (string) $name
-            : class_basename((string) $record->causer_type).' #'.$record->causer_id;
+            : class_basename((string) $record->causer_type) . ' #' . $record->causer_id;
     }
 
     private static function formatCauserDescription(Activity $record): ?string
