@@ -49,15 +49,12 @@
             <a href="{{ route('public.home') }}" class="group flex items-center gap-3">
                 <span
                     class="flex h-11 w-[148px] items-center justify-center rounded-2xl bg-white px-3 ring-1 ring-gray-200/60 sm:w-[170px]">
-	                    <img class="h-8 w-auto max-w-full object-contain" src="{{ $logoUrl }}"
-	                        alt="Logo {{ config('app.name') }}">
+                    <img class="h-8 w-auto max-w-full object-contain" src="{{ $logoUrl }}"
+                        alt="Logo {{ config('app.name') }}">
                 </span>
                 <span class="leading-tight">
                     <span class="block text-sm font-semibold text-gray-900 sm:text-base">
                         {{ config('app.name') }}
-                    </span>
-                    <span class="block text-xs text-gray-500">
-                        Repository Institusi
                     </span>
                 </span>
             </a>
@@ -130,9 +127,9 @@
                 <div class="flex items-center gap-3">
                     <span
                         class="flex h-8 w-[120px] items-center justify-center rounded-xl bg-white px-2 ring-1 ring-gray-200/60">
-	                        <a href="https://github.com/ojifahru/of-digital-repository"><img
-	                                class="h-6 w-auto max-w-full object-contain" src="{{ $logoUrl }}"
-	                                alt="Logo {{ config('app.name') }}"></a>
+                        <a href="https://github.com/ojifahru/of-digital-repository"><img
+                                class="h-6 w-auto max-w-full object-contain" src="{{ $logoUrl }}"
+                                alt="Logo {{ config('app.name') }}"></a>
                     </span>
                     <div>
                         <div class="font-medium text-gray-900">{{ config('app.name') }}</div>

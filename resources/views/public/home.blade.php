@@ -9,11 +9,11 @@
             <div
                 class="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-xs font-medium text-gray-600 shadow-sm">
                 <span class="size-1.5 rounded-full bg-indigo-600"></span>
-                <span>Repository Institusi</span>
+                <span>{{ config('app.name') }}</span>
             </div>
 
             <h1 class="mt-4 text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl">
-                Repository Institusi
+                {{ config('app.name') }}
             </h1>
             <p class="mx-auto mt-3 max-w-2xl text-base leading-relaxed text-gray-600 sm:text-[15px]">
                 Pusat dokumen TriDharma kampus yang mudah ditelusuri — judul, abstrak, dan author.

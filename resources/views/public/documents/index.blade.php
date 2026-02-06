@@ -76,7 +76,7 @@
                 </div>
 
                 <div class="mt-5 rounded-2xl bg-white">
-                    @include('public.documents._filters')
+                    @include('public.documents._filters', ['scope' => 'drawer'])
                 </div>
             </div>
         </div>
@@ -223,7 +223,7 @@
 
             <aside class="hidden md:block">
                 <div class="sticky top-24 rounded-2xl bg-white/80 p-6 shadow-sm ring-1 ring-gray-900/5">
-                    @include('public.documents._filters')
+                    @include('public.documents._filters', ['scope' => 'sidebar'])
                 </div>
             </aside>
         </div>

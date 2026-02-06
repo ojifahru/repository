@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Public;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class DocumentIndexRequest extends FormRequest
 {
@@ -21,11 +22,23 @@ class DocumentIndexRequest extends FormRequest
      */
     public function rules(): array
     {
+        $facultyId = $this->input('faculty_id');
+
+        $studyProgramExistsRule = Rule::exists('study_programs', 'id');
+        if (is_numeric($facultyId)) {
+            $studyProgramExistsRule = $studyProgramExistsRule->where('faculty_id', (int) $facultyId);
+        }
+
         return [
             'q' => ['nullable', 'string', 'max:200'],
             'author_id' => ['nullable', 'integer', 'min:1', 'exists:authors,id'],
             'faculty_id' => ['nullable', 'integer', 'min:1', 'exists:faculties,id'],
-            'study_program_id' => ['nullable', 'integer', 'min:1', 'exists:study_programs,id'],
+            'study_program_id' => [
+                'nullable',
+                'integer',
+                'min:1',
+                $studyProgramExistsRule,
+            ],
             'document_type_id' => ['nullable', 'integer', 'min:1', 'exists:document_types,id'],
             'category_id' => ['nullable', 'integer', 'min:1', 'exists:categories,id'],
             'publish_year' => ['nullable', 'integer', 'min:1900', 'max:2100'],

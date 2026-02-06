@@ -126,10 +126,20 @@ class DocumentIndexController extends Controller
                 ->withQueryString();
         }
 
+        $studyProgramsQuery = StudyProgram::query()->orderBy('name');
+        if (! empty($filters['faculty_id'])) {
+            $studyProgramsQuery->where('faculty_id', $filters['faculty_id']);
+        }
+
+        $studyProgramsAll = StudyProgram::query()
+            ->orderBy('name')
+            ->get(['id', 'name', 'faculty_id']);
+
         $filterOptions = [
             'authors' => Author::query()->orderBy('name')->get(['id', 'name']),
             'faculties' => Faculty::query()->orderBy('name')->get(['id', 'name']),
-            'studyPrograms' => StudyProgram::query()->orderBy('name')->get(['id', 'name']),
+            'studyPrograms' => $studyProgramsQuery->get(['id', 'name']),
+            'studyProgramsAll' => $studyProgramsAll,
             'categories' => Categories::query()->orderBy('name')->get(['id', 'name']),
             'documentTypes' => DocumentType::query()->orderBy('name')->get(['id', 'name']),
             'publishYears' => TriDharma::query()
