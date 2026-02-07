@@ -13,6 +13,9 @@ class StudyProgramIndexController extends Controller
     {
         $studyPrograms = StudyProgram::query()
             ->whereNotNull('slug')
+            ->whereHas('triDharmas', function ($triDharmaQuery) {
+                $triDharmaQuery->where('status', 'published');
+            })
             ->with(['faculty'])
             ->withCount([
                 'triDharmas as published_documents_count' => function ($query): void {

@@ -18,6 +18,7 @@ use App\Http\Controllers\Public\StudyProgramIndexController;
 use App\Http\Controllers\Public\StudyProgramShowController;
 use App\Http\Controllers\Public\YearArchiveIndexController;
 use App\Http\Controllers\Public\YearArchiveShowController;
+use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\SitemapController;
 use App\Models\Author;
 use App\Models\TriDharma;
@@ -28,6 +29,8 @@ Route::match(['GET', 'POST'], '/oai', OaiPmhController::class)
     ->name('oai');
 
 Route::get('/', HomeController::class)->name('public.home');
+
+Route::get('/robots.txt', RobotsController::class)->name('robots');
 
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 

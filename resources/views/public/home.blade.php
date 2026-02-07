@@ -193,6 +193,12 @@
                                     {{ $doc->category?->name ?? '' }}
                                 </x-ui.badge>
                             @endif
+                            <x-ui.badge class="border-0 bg-gray-100 text-gray-700 text-xs">
+                                {{ $doc->faculty?->name ?? '-' }}
+                            </x-ui.badge>
+                            <x-ui.badge class="border-0 bg-gray-100 text-gray-700 text-xs">
+                                {{ $doc->studyProgram?->name ?? '-' }}
+                            </x-ui.badge>
                         </div>
                     </div>
 

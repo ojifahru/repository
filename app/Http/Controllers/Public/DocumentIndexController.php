@@ -30,7 +30,8 @@ class DocumentIndexController extends Controller
 
         $relations = [
             'authors' => function ($authorQuery) {
-                $authorQuery->whereNull('authors.deleted_at');
+                $authorQuery
+                    ->whereNull('authors.deleted_at');
             },
             'category',
             'documentType',
@@ -71,7 +72,7 @@ class DocumentIndexController extends Controller
             }
 
             $documents = $searchBuilder
-                ->query(fn ($query) => $query->with($relations))
+                ->query(fn($query) => $query->with($relations))
                 ->paginate(12)
                 ->withQueryString();
         } else {
@@ -121,7 +122,7 @@ class DocumentIndexController extends Controller
             }
 
             $documents = $query
-                ->latest()
+                ->orderBy('publish_year', 'desc')
                 ->paginate(12)
                 ->withQueryString();
         }
@@ -136,7 +137,14 @@ class DocumentIndexController extends Controller
             ->get(['id', 'name', 'faculty_id']);
 
         $filterOptions = [
-            'authors' => Author::query()->orderBy('name')->get(['id', 'name']),
+            'authors' => Author::query()
+                ->whereHas('triDharmas', function ($triDharmaQuery) {
+                    $triDharmaQuery
+                        ->where('tri_dharmas.status', 'published')
+                        ->whereNull('tri_dharmas.deleted_at');
+                })
+                ->orderBy('name')
+                ->get(['id', 'name']),
             'faculties' => Faculty::query()->orderBy('name')->get(['id', 'name']),
             'studyPrograms' => $studyProgramsQuery->get(['id', 'name']),
             'studyProgramsAll' => $studyProgramsAll,
@@ -151,7 +159,7 @@ class DocumentIndexController extends Controller
         ];
 
         $hasFilters = collect($filters)
-            ->filter(fn ($value) => $value !== null && $value !== '' && $value !== [])
+            ->filter(fn($value) => $value !== null && $value !== '' && $value !== [])
             ->isNotEmpty();
 
         $titleParts = ['Dokumen Repository'];
@@ -159,7 +167,7 @@ class DocumentIndexController extends Controller
             $titleParts[] = (string) $filters['publish_year'];
         }
         if (! empty($filters['q'])) {
-            $titleParts[] = 'Pencarian: '.Str::limit((string) $filters['q'], 30);
+            $titleParts[] = 'Pencarian: ' . Str::limit((string) $filters['q'], 30);
         }
 
         $title = Seo::title($titleParts);

@@ -28,7 +28,7 @@ class HomeController extends Controller
             ->with(['authors' => function ($query) {
                 $query->whereNull('authors.deleted_at');
             }])
-            ->latest()
+            ->orderBy('publish_year', 'desc')
             ->limit(8)
             ->get();
 

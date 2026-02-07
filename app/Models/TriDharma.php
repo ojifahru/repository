@@ -48,11 +48,11 @@ class TriDharma extends Model
                 $suffix = 2;
 
                 while (self::query()->where('slug', $candidate)->exists()) {
-                    $candidate = $base.'-'.$suffix;
+                    $candidate = $base . '-' . $suffix;
                     $suffix++;
 
                     if ($suffix > 50) {
-                        $candidate = $base.'-'.Str::lower(Str::random(6));
+                        $candidate = $base . '-' . Str::lower(Str::random(6));
                         break;
                     }
                 }
@@ -101,7 +101,7 @@ class TriDharma extends Model
         ]);
 
         $activeAuthors = $this->authors
-            ->filter(fn ($author) => $author->deleted_at === null)
+            ->filter(fn($author) => $author->deleted_at === null)
             ->values();
 
         $normalizedTitle = $this->normalizeText((string) $this->title);
@@ -166,5 +166,10 @@ class TriDharma extends Model
             ->logFillable()
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
+    }
+
+    public function getTitleAttribute($value)
+    {
+        return $this->normalizeText($value);
     }
 }
