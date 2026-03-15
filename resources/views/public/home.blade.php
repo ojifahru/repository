@@ -1,4 +1,4 @@
-<x-public-layouts.app :seo="$seo" :title="config('app.name')">
+<x-public-layouts.app :seo="$seo" :title="$siteSettings->site_name">
     <section
         class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-50/70 via-white to-white p-6 sm:p-10">
         <div class="pointer-events-none absolute -left-28 -top-24 size-72 rounded-full bg-indigo-500/10 blur-3xl"></div>
@@ -9,14 +9,14 @@
             <div
                 class="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-xs font-medium text-gray-600 shadow-sm">
                 <span class="size-1.5 rounded-full bg-indigo-600"></span>
-                <span>{{ config('app.name') }}</span>
+                <span>{{ $siteSettings->hero_badge }}</span>
             </div>
 
             <h1 class="mt-4 text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl">
-                {{ config('app.name') }}
+                {{ $siteSettings->hero_title }}
             </h1>
             <p class="mx-auto mt-3 max-w-2xl text-base leading-relaxed text-gray-600 sm:text-[15px]">
-                Pusat dokumen TriDharma kampus yang mudah ditelusuri — judul, abstrak, dan author.
+                {{ $siteSettings->hero_description }}
             </p>
 
             <form class="mt-8" action="{{ route('public.documents.index') }}" method="get">

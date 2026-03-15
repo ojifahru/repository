@@ -5,14 +5,15 @@ namespace App\Http\Controllers\Public;
 use App\Http\Controllers\Controller;
 use App\Models\Author;
 use App\Models\Faculty;
-use App\Models\TriDharma;
 use App\Models\StudyProgram;
+use App\Models\TriDharma;
+use App\Settings\PublicSiteSettings;
 use App\Support\Seo\Seo;
 use Illuminate\Contracts\View\View;
 
 class HomeController extends Controller
 {
-    public function __invoke(): View
+    public function __invoke(PublicSiteSettings $siteSettings): View
     {
         $publishedDocumentsQuery = TriDharma::query()
             ->where('status', 'published');
@@ -34,13 +35,13 @@ class HomeController extends Controller
 
         $canonical = route('public.home');
         $title = Seo::title(['Repository Institusi']);
-        $description = Seo::description('Repository institusi kampus untuk skripsi, tesis, jurnal, artikel, dan dokumen TriDharma. Telusuri judul, abstrak, penulis, dan unduh PDF.');
+        $description = Seo::description($siteSettings->site_description);
 
         $jsonLd = [
             [
                 '@context' => 'https://schema.org',
                 '@type' => 'WebSite',
-                'name' => (string) config('app.name'),
+                'name' => Seo::siteName(),
                 'url' => $canonical,
                 'inLanguage' => 'id',
             ],
@@ -49,6 +50,7 @@ class HomeController extends Controller
         return view('public.home', [
             'stats' => $stats,
             'latestDocuments' => $latestDocuments,
+            'siteSettings' => $siteSettings,
             'seo' => [
                 'title' => $title,
                 'description' => $description,

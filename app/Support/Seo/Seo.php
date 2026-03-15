@@ -2,16 +2,32 @@
 
 namespace App\Support\Seo;
 
+use App\Settings\PublicSiteSettings;
 use Illuminate\Support\Str;
+use Throwable;
 
 class Seo
 {
+    public static function siteName(): string
+    {
+        try {
+            $siteName = trim((string) app(PublicSiteSettings::class)->site_name);
+
+            if ($siteName !== '') {
+                return $siteName;
+            }
+        } catch (Throwable) {
+        }
+
+        return (string) config('app.name');
+    }
+
     /**
      * @param  array<int, string>  $parts
      */
     public static function title(array $parts, ?string $siteName = null): string
     {
-        $siteName = $siteName ?? (string) config('app.name');
+        $siteName = $siteName ?? self::siteName();
 
         $parts = array_values(array_filter($parts, fn ($part) => is_string($part) && trim($part) !== ''));
 
@@ -48,7 +64,7 @@ class Seo
         $title = trim(preg_replace('/\s+/u', ' ', $title) ?? $title);
 
         if ($title === '') {
-            return (string) config('app.name');
+            return self::siteName();
         }
 
         return Str::limit($title, 60, '…');

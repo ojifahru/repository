@@ -65,7 +65,7 @@ class DocumentShowController extends Controller
                 'abstract' => $document->abstract ? (string) $document->abstract : null,
                 'publisher' => [
                     '@type' => 'Organization',
-                    'name' => (string) config('app.name'),
+                    'name' => Seo::siteName(),
                 ],
                 'inLanguage' => 'id',
                 'url' => $canonical,

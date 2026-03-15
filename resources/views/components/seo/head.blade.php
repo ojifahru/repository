@@ -7,7 +7,8 @@
         $seo = [];
     }
 
-    $title = $seo['title'] ?? config('app.name');
+    $siteName = \App\Support\Seo\Seo::siteName();
+    $title = $seo['title'] ?? $siteName;
     $description = $seo['description'] ?? null;
     $canonical = $seo['canonical'] ?? url()->current();
     $robots = $seo['robots'] ?? null;
@@ -41,7 +42,7 @@
     <meta name="robots" content="{{ $robots }}">
 @endif
 
-<meta property="og:site_name" content="{{ config('app.name') }}">
+<meta property="og:site_name" content="{{ $siteName }}">
 <meta property="og:title" content="{{ $og['title'] ?? $title }}">
 @if (!empty($description) || !empty($og['description']))
     <meta property="og:description" content="{{ $og['description'] ?? $description }}">

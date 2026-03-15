@@ -50,7 +50,7 @@ class StudyProgramShowController extends Controller
                 'inLanguage' => 'id',
                 'parentOrganization' => [
                     '@type' => 'Organization',
-                    'name' => $facultyName ? 'Fakultas '.$facultyName : (string) config('app.name'),
+                    'name' => $facultyName ? 'Fakultas '.$facultyName : Seo::siteName(),
                 ],
             ],
         ];

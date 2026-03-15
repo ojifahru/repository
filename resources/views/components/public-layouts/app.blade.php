@@ -10,12 +10,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     @php
+        $siteSettings = rescue(fn () => app(\App\Settings\PublicSiteSettings::class), null, report: false);
+        $siteName = filled($siteSettings?->site_name) ? $siteSettings->site_name : \App\Support\Seo\Seo::siteName();
+        $footerTagline = filled($siteSettings?->footer_tagline) ? $siteSettings->footer_tagline : 'TriDharma • Dokumen ilmiah • Akses publik';
         $seoData = is_array($seo) ? $seo : [];
-        $seoData['title'] = $seoData['title'] ?? ($title ?? config('app.name'));
+        $seoData['title'] = $seoData['title'] ?? ($title ?? $siteName);
 
         $logoAsset = file_exists(public_path('images/logo.png')) ? 'images/logo.png' : 'images/logo_real.png';
-        $logoStoragePath = 'uploads/logo.png';
-        $faviconStoragePath = 'uploads/favicon.png';
+        $logoStoragePath = filled($siteSettings?->logo_path) ? $siteSettings->logo_path : 'uploads/logo.png';
+        $faviconStoragePath = filled($siteSettings?->favicon_path) ? $siteSettings->favicon_path : 'uploads/favicon.png';
 
         $logoUrl = null;
         if (\Illuminate\Support\Facades\Storage::disk('public')->exists($logoStoragePath)) {
@@ -50,11 +53,11 @@
                 <span
                     class="flex h-11 w-[148px] items-center justify-center rounded-2xl bg-white px-3 ring-1 ring-gray-200/60 sm:w-[170px]">
                     <img class="h-8 w-auto max-w-full object-contain" src="{{ $logoUrl }}"
-                        alt="Logo {{ config('app.name') }}">
+                        alt="Logo {{ $siteName }}">
                 </span>
                 <span class="leading-tight">
                     <span class="block text-sm font-semibold text-gray-900 sm:text-base">
-                        {{ config('app.name') }}
+                        {{ $siteName }}
                     </span>
                 </span>
             </a>
@@ -129,16 +132,16 @@
                         class="flex h-8 w-[120px] items-center justify-center rounded-xl bg-white px-2 ring-1 ring-gray-200/60">
                         <a href="https://github.com/ojifahru/of-digital-repository"><img
                                 class="h-6 w-auto max-w-full object-contain" src="{{ $logoUrl }}"
-                                alt="Logo {{ config('app.name') }}"></a>
+                                alt="Logo {{ $siteName }}"></a>
                     </span>
                     <div>
-                        <div class="font-medium text-gray-900">{{ config('app.name') }}</div>
+                        <div class="font-medium text-gray-900">{{ $siteName }}</div>
                         <div class="text-xs text-gray-500">© {{ now()->year }} — Repository publik</div>
                     </div>
                 </div>
 
                 <div class="text-xs text-gray-500">
-                    TriDharma • Dokumen ilmiah • Akses publik
+                    {{ $footerTagline }}
                 </div>
             </div>
         </div>

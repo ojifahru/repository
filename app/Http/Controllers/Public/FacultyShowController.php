@@ -45,7 +45,7 @@ class FacultyShowController extends Controller
                 'inLanguage' => 'id',
                 'parentOrganization' => [
                     '@type' => 'Organization',
-                    'name' => (string) config('app.name'),
+                    'name' => Seo::siteName(),
                 ],
             ],
         ];
