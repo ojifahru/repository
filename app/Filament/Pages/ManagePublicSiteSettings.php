@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Settings\PublicSiteSettings;
 use BackedEnum;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -15,6 +16,7 @@ use UnitEnum;
 
 class ManagePublicSiteSettings extends SettingsPage
 {
+    use HasPageShield;
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
     protected static string|UnitEnum|null $navigationGroup = 'Sistem';

@@ -5,9 +5,11 @@ namespace App\Filament\Pages;
 use Filament\Pages\Dashboard as BaseDashboard;
 use App\Filament\Widgets\TriDharmaPerYear;
 use App\Filament\Widgets\TriDharmaStatsOverview;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class Dashboard extends BaseDashboard
 {
+    use HasPageShield;
     public function canView(): bool
     {
         if (auth()->user()->can('View:Dashboard')) {
